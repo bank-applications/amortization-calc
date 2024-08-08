@@ -1,0 +1,12 @@
+.table th, .table td {
+    text-align: center;
+  }
+  .collapse {
+    display: none;
+  }
+  .year-summary {
+    margin-top: 10px;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border: 1px solid #ddd;
+  }

@@ -1,0 +1,45 @@
+<div class="container">
+  @for(year of yearlyTotals; track $index) {
+  <div>
+    <h3>
+      Financial Year {{ year.year }}
+      <button class="btn btn-primary btn-sm float-end" (click)="toggleCollapse(year.year)">
+        {{ collapsedYears[year.year] ? 'Show Details' : 'Hide Details' }}
+      </button>
+    </h3>
+    <div [ngClass]="{'collapse': collapsedYears[year.year]}">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Month</th>
+            <th>Starting Balance</th>
+            <th>Principal</th>
+            <th>Interest</th>
+            <th>Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(payment of schedule; track $index) {
+            <tr>
+              <td>{{ payment.month }}</td>
+              <td>{{ payment.monthName }}</td>
+              <td>{{ payment.startingBalance }}</td>
+              <td>{{ payment.principal }}</td>
+              <td>{{ payment.interest }}</td>
+              <td>{{ payment.balance }}</td>
+            </tr>
+          }
+          
+        </tbody>
+      </table>
+      <div class="year-summary">
+        <p><strong>Total Principal:</strong> {{ year.totalPrincipal }}</p>
+        <p><strong>Total Interest:</strong> {{ year.totalInterest }}</p>
+        <p><strong>Starting Balance:</strong> {{ year.startingBalance }}</p>
+        <p><strong>Ending Balance:</strong> {{ year.endingBalance }}</p>
+      </div>
+    </div>
+  </div>
+  }
+</div>
