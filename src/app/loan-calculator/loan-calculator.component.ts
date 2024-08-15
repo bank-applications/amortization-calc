@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Validators, AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AmortizationScheduleComponent } from '../amortization-schedule/amortization-schedule.component';
-import { YearlyTotal } from '../domain/yearly-total';
+import { Schedule } from '../domain/amortization-domains';
 
 
 
@@ -15,10 +15,14 @@ import { YearlyTotal } from '../domain/yearly-total';
 })
 export class LoanCalculatorComponent {
   loanForm: FormGroup;
-  schedule: any[] = [];
-  yearlyTotals: YearlyTotal[] = []; // Use the interface here
+  schedule: Schedule[] = [];
   alerts: { type: string, message: string }[] = [];
   collapsedYears: { [year: number]: boolean } = {}; // To manage collapse state
+  isCollapsedForm: boolean = false;
+
+  toggleCollapseForm() {
+    this.isCollapsedForm = !this.isCollapsedForm;
+  }
 
 
   constructor(private fb: FormBuilder) {
@@ -28,9 +32,11 @@ export class LoanCalculatorComponent {
       years: [25, [Validators.required, Validators.min(1), Validators.max(50)]],
       startDate: [new Date('02-02-2022').toISOString().substring(0, 10), Validators.required]
     });
+
+    this.calculateAmortization();
   }
 
-  
+
   get f() {
     return this.loanForm.controls as { [key: string]: AbstractControl };
   }
@@ -53,8 +59,8 @@ export class LoanCalculatorComponent {
     }
   }
 
-   // Method to clear default values on focus
-   clearDefaultValue(controlName: string) {
+  // Method to clear default values on focus
+  clearDefaultValue(controlName: string) {
     const control = this.f[controlName];
     if (control.value === this.getDefaultValue(controlName)) {
       control.setValue('');
@@ -96,92 +102,107 @@ export class LoanCalculatorComponent {
     }
   }
 
-  
+  calculateEmi = (interestRate: number, loanPeriod: number, loanAmount: number) => {
+    const roi: number = interestRate / 12 / 100;
+    const nom: number = 12 * loanPeriod;
+    const rateVariable: number = Math.pow(1 + roi, nom);
+    return Math.round(
+      loanAmount * roi * (rateVariable / (rateVariable - 1))
+    );
+  }
+
+  setEmiDatails(sch: Schedule) {
+    const { principal, annualRate, years } = this.loanForm.value;
+    const emi = this.calculateEmi(annualRate, years, principal);
+    const roi: number = annualRate / 12 / 100;
+    const interestPaid = sch.startingBalance * roi;
+    const principalPaid = emi - interestPaid;
+    const endingBalance = sch.startingBalance - principalPaid;
+    sch.emiPaid = emi;
+    sch.interestPaid = interestPaid;
+    sch.principalPaid = principalPaid;
+    sch.endingBalance = endingBalance;
+  }
+
+  pushFirstElement() {
+    const { principal, annualRate, startDate } = this.loanForm.value;
+    const sDate = new Date(startDate);
+    const fYear = this.getFinancialYear(sDate);
+    const mName = this.getMonthName(sDate.getMonth());
+    const sch: Schedule = {
+      startingBalance: principal,
+      month: 1,
+      year: fYear,
+      monthName: mName,
+      principalPaid: 0,
+      interestPaid: 0,
+      interestRate: annualRate,
+      emiPaid: 0,
+      partPaymentPaid: 0,
+      endingBalance: 0
+    };
+    this.setEmiDatails(sch);
+    this.schedule.push(sch);
+  }
+
+  pushRemainingElements(index: number) {
+    const prevElement: Schedule = this.schedule[index];
+    const { startDate } = this.loanForm.value;
+    const nextMonthDate = new Date(startDate);
+    nextMonthDate.setMonth(nextMonthDate.getMonth() + prevElement.month)
+    const fYear = this.getFinancialYear(nextMonthDate);
+    const mName = this.getMonthName(nextMonthDate.getMonth());
+
+    const currentElement: Schedule = {
+      month: prevElement.month + 1,
+      year: fYear,
+      monthName: mName,
+      startingBalance: prevElement.endingBalance,
+      principalPaid: 0,
+      interestPaid: 0,
+      interestRate: prevElement.interestRate,
+      emiPaid: 0,
+      partPaymentPaid: 0,
+      endingBalance: 0
+    };
+    this.setEmiDatails(currentElement);
+    this.schedule.push(currentElement);
+  }
+
+
   calculateAmortization() {
     this.checkValidations(); // Check for form validation errors
-
     // If form is invalid, return early
     if (this.loanForm.invalid) {
       return;
     }
-
     this.alerts = []; // Clear previous alerts
-
-    
-  const values = this.loanForm.value;
-  const monthlyRate = values.annualRate / 100 / 12;
-  const totalPayments = values.years * 12;
-  const monthlyPayment = (values.principal * monthlyRate) / (1 - Math.pow((1 + monthlyRate), -totalPayments));
-  
-  const schedule = [];
-  const yearlyTotals: { [key: number]: YearlyTotal } = {}; // Use a dictionary for aggregation
-  let balance = values.principal;
-  let currentDate = new Date(values.startDate);
-
-  for (let i = 1; i <= totalPayments; i++) {
-    const interest = balance * monthlyRate;
-    const principal = monthlyPayment - interest;
-    const startingBalance = balance;
-    balance -= principal;
-
-    // Calculate financial year and month
-    const month = currentDate.getMonth() + 1;
-    const year = this.getFinancialYear(currentDate);
-
-    // Add to schedule
-    schedule.push({
-      month: i,
-      year: year,
-      monthName: this.getMonthName(month),
-      startingBalance: startingBalance.toFixed(2),
-      principal: principal.toFixed(2),
-      interest: interest.toFixed(2),
-      balance: balance.toFixed(2)
-    });
-
-    // Aggregate values for the financial year
-      if (!yearlyTotals[year]) {
-        yearlyTotals[year] = {
-          year: year,
-          totalPrincipal: 0,
-          totalInterest: 0,
-          startingBalance: '',
-          endingBalance: ''
-        };
+    const { startDate } = this.loanForm.value;
+    // push first element
+    this.pushFirstElement();
+    for (let index = 0; this.schedule[this.schedule.length - 1].endingBalance > 0; index++) {
+      if (!this.schedule.length) {
+        break;
       }
+      this.pushRemainingElements(index);
+    }
 
-      yearlyTotals[year].totalPrincipal += parseFloat(principal.toFixed(2));
-      yearlyTotals[year].totalInterest += parseFloat(interest.toFixed(2));
-      yearlyTotals[year].startingBalance = startingBalance.toFixed(2);
-      yearlyTotals[year].endingBalance = balance.toFixed(2);
-
-    // Increment month
-    currentDate.setMonth(currentDate.getMonth() + 1);
+    this.alerts.push({ type: 'success', message: 'Amortization calculation successful!' }); // Success alert
+    this.toggleCollapseForm()
   }
 
-  this.schedule = schedule;
-  this.yearlyTotals = Object.values(yearlyTotals);
-  console.log( this.yearlyTotals)
-
-  // Success alert
-  this.alerts.push({ type: 'success', message: 'Amortization calculation successful!' });
-
-  
- 
-  }
-
-  getFinancialYear(date: Date): number {
-    const year = date.getFullYear();
-    return date.getMonth() < 6 ? year - 1 : year; // Assuming financial year starts in July
-  }
-  
+  getFinancialYear = (currentEmiDate: Date): string => {
+    const currentYear = currentEmiDate.getMonth() < 3 ? currentEmiDate.getFullYear() - 1 : currentEmiDate.getFullYear();
+    const nextYear = currentYear + 1;
+    return `${currentYear}-${nextYear}`;
+  };
 
   getMonthName(month: number): string {
     const monthNames = [
       'January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December'
     ];
-    return monthNames[month - 1];
+    return monthNames[month];
   }
 
   toggleCollapse(year: number) {

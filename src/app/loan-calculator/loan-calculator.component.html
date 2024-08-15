@@ -1,9 +1,17 @@
 <div class="container mt-4">
+
   <div class="card">
-    <div class="card-header">
-      <h5 class="card-title">Loan Amortization Calculator</h5>
+    <div class="card-header" (click)="toggleCollapseForm()">
+      <h5 class="mb-0">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+          aria-controls="collapseOne">
+          Loan Amortization Calculator
+        </button>
+      </h5>
+      <i class="icon" [ngClass]="isCollapsedForm ? 'expand-icon' : 'collapse-icon'"></i>
+
     </div>
-    <div class="card-body">
+    <div class="card-body" *ngIf="!isCollapsedForm">
       <div *ngFor="let alert of alerts" class="alert alert-{{alert.type}} alert-dismissible fade show" role="alert">
         {{alert.message}}
         <button type="button" class="btn-close" aria-label="Close" (click)="removeAlert(alert)"></button>
@@ -11,56 +19,32 @@
       <form [formGroup]="loanForm" (ngSubmit)="calculateAmortization()">
         <div class="form-group">
           <label for="principal">Principal Amount</label>
-          <input
-            type="number"
-            class="form-control"
-            id="principal"
-            formControlName="principal"
-            placeholder="Enter principal amount"
-            (focus)="clearDefaultValue('principal')"
-          >
+          <input type="number" class="form-control" id="principal" formControlName="principal"
+            placeholder="Enter principal amount" (focus)="clearDefaultValue('principal')">
         </div>
         <div class="form-group">
           <label for="annualRate">Annual Interest Rate (%)</label>
-          <input
-            type="number"
-            class="form-control"
-            id="annualRate"
-            formControlName="annualRate"
-            placeholder="Enter annual rate"
-            (focus)="clearDefaultValue('annualRate')"
-          >
+          <input type="number" class="form-control" id="annualRate" formControlName="annualRate"
+            placeholder="Enter annual rate" (focus)="clearDefaultValue('annualRate')">
         </div>
         <div class="form-group">
           <label for="years">Loan Term (Years)</label>
-          <input
-            type="number"
-            class="form-control"
-            id="years"
-            formControlName="years"
-            placeholder="Enter loan term"
-            (focus)="clearDefaultValue('years')"
-
-
-          >
+          <input type="number" class="form-control" id="years" formControlName="years" placeholder="Enter loan term"
+            (focus)="clearDefaultValue('years')">
         </div>
         <div class="form-group">
           <label for="startDate">Start Date</label>
-          <input
-            type="date"
-            class="form-control"
-            id="startDate"
-            formControlName="startDate"
-            (focus)="clearDefaultValue('startDate')"
-
-          >
+          <input type="date" class="form-control" id="startDate" formControlName="startDate"
+            (focus)="clearDefaultValue('startDate')">
         </div>
         <div class="d-flex justify-content-end mt-3">
           <button type="submit" class="btn btn-primary" [disabled]="loanForm.invalid">Calculate</button>
         </div>
       </form>
+
+
     </div>
+
   </div>
 
   <app-amortization-schedule *ngIf="schedule.length > 0" [schedule]="schedule"></app-amortization-schedule>
-</div>
