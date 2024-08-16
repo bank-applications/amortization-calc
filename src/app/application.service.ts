@@ -38,7 +38,7 @@ export class ApplicationService {
     return monthNames[month];
   }
 
-  getCurrentMonthSchedule(prevSchedule: Schedule, loanForm: LoanForm, iSchedule?: ISchedule): Schedule {
+  getCurrentMonthSchedule(prevSchedule: Schedule, loanForm: LoanForm, ischeduleMap: Map<number, ISchedule>): Schedule {
 
     const sDate = new Date(loanForm.startDate);
     sDate.setMonth(sDate.getMonth() + prevSchedule.month )
@@ -46,12 +46,12 @@ export class ApplicationService {
     const monthName = this.getMonthName(sDate.getMonth());
     const month = this.getCurrentMonth(prevSchedule);
     const startingBalance = this.getStartingBalance(prevSchedule, loanForm.principal);
-    const emiPaid = this.getEmi(prevSchedule, loanForm, iSchedule);
+    const emiPaid = this.getEmi(prevSchedule, loanForm, ischeduleMap.get(month) );
     const currentSchedule: Schedule = {
       ...prevSchedule, month, year, monthName, startingBalance, emiPaid
     };
 
-    this.setEndBalance(currentSchedule, loanForm, iSchedule);
+    this.setEndBalance(currentSchedule, loanForm, ischeduleMap.get(month) );
     return currentSchedule;
 
   }
