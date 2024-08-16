@@ -32,8 +32,7 @@ export class ApplicationService {
 
   getMonthName(month: number): string {
     const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
     ];
     return monthNames[month];
   }
@@ -41,17 +40,17 @@ export class ApplicationService {
   getCurrentMonthSchedule(prevSchedule: Schedule, loanForm: LoanForm, ischeduleMap: Map<number, ISchedule>): Schedule {
 
     const sDate = new Date(loanForm.startDate);
-    sDate.setMonth(sDate.getMonth() + prevSchedule.month )
+    sDate.setMonth(sDate.getMonth() + prevSchedule.month + 1)
     const year = this.getFinancialYear(sDate);
     const monthName = this.getMonthName(sDate.getMonth());
     const month = this.getCurrentMonth(prevSchedule);
     const startingBalance = this.getStartingBalance(prevSchedule, loanForm.principal);
-    const emiPaid = this.getEmi(prevSchedule, loanForm, ischeduleMap.get(month) );
+    const emiPaid = this.getEmi(prevSchedule, loanForm, ischeduleMap.get(month));
     const currentSchedule: Schedule = {
-      ...prevSchedule, month, year, monthName, startingBalance, emiPaid
+      ...prevSchedule, month, year, monthName: `${monthName}-${sDate.getFullYear()}`, startingBalance, emiPaid
     };
 
-    this.setEndBalance(currentSchedule, loanForm, ischeduleMap.get(month) );
+    this.setEndBalance(currentSchedule, loanForm, ischeduleMap.get(month));
     return currentSchedule;
 
   }
@@ -61,12 +60,18 @@ export class ApplicationService {
     currentSchedule.partPaymentPaid = iSchedule?.partPaymentPaid ?? 0;
 
     // set annual-interest
-    currentSchedule.interestRate = iSchedule?.interestRate ?? (currentSchedule.interestRate != 0 ? currentSchedule.interestRate : loanForm.annualRate);
+    currentSchedule.interestRate = iSchedule?.interestRate && iSchedule?.interestRate != 0 ?
+      iSchedule.interestRate :
+      (currentSchedule.interestRate != 0 ?
+         currentSchedule.interestRate : 
+         loanForm.annualRate);
     // calculate and set interest amount paid
     const roi: number = currentSchedule.interestRate / 12 / 100;
     currentSchedule.interestPaid = (currentSchedule.startingBalance - currentSchedule.partPaymentPaid) * roi;
+
+
     // check if interest to be paid more that emi
-    if (currentSchedule.interestPaid > currentSchedule.emiPaid) {
+    if ((currentSchedule.emiPaid - currentSchedule.interestPaid) < 0) {
       currentSchedule.emiPaid = this.calculateEmi(currentSchedule.interestRate, loanForm.years, loanForm.principal);
     }
     // set principal amount
@@ -98,7 +103,7 @@ export class ApplicationService {
     const roi: number = interestRate / 12 / 100;
     const nom: number = 12 * loanPeriod;
     const rateVariable: number = Math.pow(1 + roi, nom);
-    return Math.round(
+    return Math.ceil(
       loanAmount * roi * (rateVariable / (rateVariable - 1))
     );
   }

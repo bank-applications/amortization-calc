@@ -1,5 +1,5 @@
 <div class="container">
-  <table class="table table-bordered">
+  <table class="table table-bordered table-striped table-lg">
     <thead>
       <tr>
         <th>Financial-Year</th>
@@ -16,7 +16,7 @@
     <tbody>
       @for(yearItem of yearlyTotals; track $index) {
       <tr>
-        <td>{{ yearItem.year }}</td>
+        <td>{{ yearItem.year }} - {{yearItem.year + 1}}</td>
         <td>{{ yearItem.startingBalance.toFixed(0) }}</td>
         <td>{{ yearItem.totalInterestPaid.toFixed(0)}}</td>
         <td>{{ yearItem.totalPrincipalPaid.toFixed(0) }}</td>
@@ -35,6 +35,7 @@
                 <th>#</th>
                 <th>Month</th>
                 <th>Starting Balance</th>
+                <th>ROI</th>
                 <th>Interest</th>
                 <th>Principal</th>
                 <th>EMI</th>
@@ -47,6 +48,7 @@
                 <td>{{ monthItem.month }}</td>
                 <td>{{ monthItem.monthName }}</td>
                 <td>{{ monthItem.startingBalance.toFixed(0) }}</td>
+                <td>{{ monthItem.interestRate.toFixed(2)  }}</td>
                 <td>{{ monthItem.interestPaid.toFixed(0) }}</td>
                 <td>{{ monthItem.principalPaid.toFixed(0) }}</td>
                 <td>{{ monthItem.emiPaid.toFixed(0) }}</td>
