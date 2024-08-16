@@ -14,7 +14,7 @@
     <div class="card-body" *ngIf="!isCollapsedForm">
       <div *ngFor="let alert of alerts" class="alert alert-{{alert.type}} alert-dismissible fade show" role="alert">
         {{alert.message}}
-        <button type="button" class="btn-close" aria-label="Close" (click)="removeAlert(alert)"></button>
+        <button type="button" class="btn-close" aria-label="Close" (click)="clearAlerts(alert)"></button>
       </div>
       <form [formGroup]="loanForm" (ngSubmit)="calculateAmortization()">
         <div class="form-group">

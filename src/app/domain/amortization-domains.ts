@@ -24,3 +24,19 @@ export interface YearlyTotal {
     partPaymentPaid: number
     endingBalance: number;
   }
+
+  
+  export interface LoanForm {
+    principal: number;
+    annualRate: number;
+    years: number;
+    startDate: Date
+  }
+
+  
+  export interface ISchedule {
+    month: number;
+    interestRate: number;
+    emiPaid: number;
+    partPaymentPaid: number
+  }
