@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/amortization-calc",
+    "public": "dist/amortization-calc/browser",
     "ignore": [
       "firebase.json",
       "**/.*",
