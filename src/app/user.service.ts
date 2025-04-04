@@ -21,12 +21,21 @@ export class UserService {
     this.ischeduleMap.set(26, { month: 26, interestRate: 0, emiPaid: 0, partPaymentPaid: 200000 });
     this.ischeduleMap.set(30, { month: 30, interestRate: 0, emiPaid: 0, partPaymentPaid: 300000 });
     this.ischeduleMap.set(32, { month: 32, interestRate: 0, emiPaid: 0, partPaymentPaid: 100000 });
+    this.ischeduleMap.set(33, { month: 33, interestRate: 0, emiPaid: 0, partPaymentPaid: 200000 });
+    this.ischeduleMap.set(34, { month: 34, interestRate: 0, emiPaid: 0, partPaymentPaid: 180000 });
+    this.ischeduleMap.set(37, { month: 37, interestRate: 8.10, emiPaid: 0, partPaymentPaid: 0 });
+    this.ischeduleMap.set(38, { month: 38, interestRate: 0, emiPaid: 0, partPaymentPaid: 300000 });
+    this.ischeduleMap.set(45, { month: 45, interestRate: 0, emiPaid: 0, partPaymentPaid: 350000 });
+    this.ischeduleMap.set(54, { month: 54, interestRate: 0, emiPaid: 0, partPaymentPaid: 442000 });
+    this.ischeduleMap.set(62, { month: 62, interestRate: 0, emiPaid: 0, partPaymentPaid: 237000 });
 
-    this.ischeduleMap.set(33, { month: 33, interestRate: 0, emiPaid: 0, partPaymentPaid: 300000 });
+
+
+
 
     // Assumptopns
 
-    const partPay = 300000;
+    const partPay = 0;
     //25-26
     this.ischeduleMap.set(49, { month: 49, interestRate: 0, emiPaid: 0, partPaymentPaid: partPay });
     //26-27
