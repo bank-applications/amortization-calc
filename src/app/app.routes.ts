@@ -1,13 +1,13 @@
-import { RouterModule, Routes } from '@angular/router';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { FormComponent } from './dashboard/form/form.component';
-import { NgModule } from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {DashboardComponent} from './dashboard/dashboard.component';
+import {FormComponent} from './dashboard/form/form.component';
+import {NgModule} from '@angular/core';
+import {AmortizationDashboardComponent} from "./amortization-dashboard/amortization-dashboard.component";
 
-export  const routes: Routes = [
-    { path: 'dashboard', component: DashboardComponent },
-    { path: 'form', component: FormComponent },
-    { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-    { path: '**', redirectTo: '/dashboard' }
-  ];
+export const routes: Routes = [
+  {path: 'dashboard', component: AmortizationDashboardComponent},
+  // {path: 'dashboard', component: DashboardComponent},
+  {path: 'form', component: FormComponent},
+  {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
+];
 
- 
