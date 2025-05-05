@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+  --bg-primary-from: var(--p-blue-800);
+  --bg-primary-to: var(--p-blue-500);
+  --primary-font-color: #FFFFFF;
+  --form-element-background: var(--p-blue-400);
+  --form-element-label-color: var(--p-blue-50);
+  --global-border-color: #FFFFFF33;
+  --primary-button-color: var(--p-blue-400);
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  color: var(--primary-font-color);
+}
+
+
