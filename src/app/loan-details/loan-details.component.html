@@ -1,22 +1,41 @@
-<form [formGroup]="formGroup">
-<!--  <p-floatlabel>-->
-<!--    <input id="username" pInputText formControlName="formGroup.principal" />-->
-<!--    <label for="username">Username</label>-->
-<!--  </p-floatlabel>-->
-<!--  <p-floatlabel>-->
-<!--    <input id="username1" pInputText [(ngModel)]="value" />-->
-<!--    <label for="username">Username</label>-->
-<!--  </p-floatlabel>-->
-<!--  <p-floatlabel>-->
-<!--    <input id="username2" pInputText [(ngModel)]="value" />-->
-<!--    <label for="username">Username</label>-->
-<!--  </p-floatlabel>-->
-<!--  <p-floatlabel>-->
-<!--    <input id="username3" pInputText [(ngModel)]="value" />-->
-<!--    <label for="username">Username</label>-->
-<!--  </p-floatlabel>-->
-<!--  <p-floatlabel>-->
-<!--    <input id="username4" pInputText [(ngModel)]="value" />-->
-<!--    <label for="username">Username</label>-->
-<!--  </p-floatlabel>-->
-</form>
+<div class="loan-details-section">
+  <div>
+    <h5 class="section-header">Loan Details</h5>
+  </div>
+  <form [formGroup]="formGroup" class="loan-details-form" >
+    <div class="row">
+      <div class="col">
+        <p-floatlabel>
+          <input id="username" pInputText placeholder="" [dt]="formElementStyles" formControlName="principal" />
+          <label for="username" class="form-element-label">Principal Amount</label>
+        </p-floatlabel>
+      </div>
+      <div class="col">
+        <p-floatlabel>
+          <input id="roi" pInputText placeholder="" [dt]="formElementStyles" formControlName="roi" />
+          <label for="roi" class="form-element-label">Interest Rate</label>
+        </p-floatlabel>
+      </div>
+      <div class="col">
+        <p-floatlabel>
+          <input id="tenure" pInputText placeholder="" [dt]="formElementStyles" formControlName="tenure" />
+          <label for="tenure" class="form-element-label">Tenure</label>
+        </p-floatlabel>
+      </div>
+      <div class="col date-picker-element">
+        <label class="form-element-label loan-start-date">Start Date</label>
+        <p-datepicker formControlName="startDate" [dt]="formElementStyles"></p-datepicker>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-5"></div>
+      <div class="col-2 flex justify-content-center">
+        <p-button label="Submit" [raised]="true" [dt]="submitButtonStyles" (onClick)="onSubmitDetails()"/>
+      </div>
+      <div class="col-5"></div>
+    </div>
+
+  </form>
+</div>
+
+

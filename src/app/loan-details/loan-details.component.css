@@ -1,0 +1,28 @@
+.loan-details-form {
+  padding: 3%;
+}
+
+.loan-details-section {
+  border: 2px solid var(--global-border-color);
+  border-radius: 10px;
+}
+
+.form-element-label {
+  color: white !important;
+}
+
+.section-header {
+  margin: 1% 1.5%;
+  border-bottom: 2px dashed var(--global-border-color);
+  padding-bottom:0.5%;
+}
+
+.loan-start-date {
+  font-size: 0.75rem;
+  display: flex;
+}
+
+.date-picker-element {
+  position: relative;
+  top: -1.25rem;
+}
