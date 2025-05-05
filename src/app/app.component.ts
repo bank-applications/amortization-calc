@@ -1,8 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterModule, RouterOutlet } from '@angular/router';
-import { DashboardComponent } from "./dashboard/dashboard.component";
-import { LoanCalculatorComponent } from "./loan-calculator/loan-calculator.component";
-import { FilterByYearPipe } from './filter-by-year.pipe';
+import { RouterModule } from '@angular/router';
 import {HeaderComponent} from "./header/header.component";
 import {BodyComponent} from "./body/body.component";
 
@@ -15,5 +12,5 @@ import {BodyComponent} from "./body/body.component";
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'Home loan Amortization Calculator';
+  title = 'Home loan Amortisation Calculator';
 }
