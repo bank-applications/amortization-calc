@@ -12,6 +12,6 @@ export interface MonthlyInstallment {
   endingBalance: number;         // Remaining principal at month end
 
   paymentStatus: 'PAID' | 'DUE' | 'UPCOMING'; // Current payment state
-  paymentDate: Date;          // Optional: actual payment date
+  paymentDate?: Date;          // Optional: actual payment date
   remarks?: string;              // Optional: notes or comments
 }
