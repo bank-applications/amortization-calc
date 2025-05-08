@@ -1,7 +1,4 @@
-<div class="loan-details-section">
-  <div>
-    <h5 class="section-header">Loan Details</h5>
-  </div>
+<p-card header="Loan Details" [dt]="loanDetailsCardStyles">
   <form [formGroup]="formGroup" class="loan-details-form" >
     <div class="row">
       <div class="col">
@@ -30,12 +27,10 @@
     <div class="row">
       <div class="col-5"></div>
       <div class="col-2 flex justify-content-center">
-        <p-button label="Submit" [raised]="true" [dt]="submitButtonStyles" (onClick)="onSubmitDetails()"/>
+        <p-button class="custom-icon-button" label="Submit" [raised]="true" [dt]="submitButtonStyles" (onClick)="onSubmitDetails()"/>
       </div>
       <div class="col-5"></div>
     </div>
 
   </form>
-</div>
-
-
+</p-card>
