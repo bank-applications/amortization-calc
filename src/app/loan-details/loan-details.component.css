@@ -2,19 +2,8 @@
   padding: 3%;
 }
 
-.loan-details-section {
-  border: 2px solid var(--global-border-color);
-  border-radius: 10px;
-}
-
 .form-element-label {
-  color: white !important;
-}
-
-.section-header {
-  margin: 1% 1.5%;
-  border-bottom: 2px dashed var(--global-border-color);
-  padding-bottom:0.5%;
+  color: #FFFFFF !important;
 }
 
 .loan-start-date {
