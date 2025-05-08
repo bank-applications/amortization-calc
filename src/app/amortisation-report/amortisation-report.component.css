@@ -1,0 +1,11 @@
+.amortisation-report-section {
+  min-height: 80vh;
+}
+
+:host ::ng-deep .expansion-toggle .p-button .pi {
+  color: #FFFFFF;
+}
+
+:host ::ng-deep .expansion-toggle .p-button .pi:hover {
+  color: var(--primary-button-color);
+}
