@@ -3,10 +3,11 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {FloatLabel} from "primeng/floatlabel";
 import {InputText} from "primeng/inputtext";
 import {DatePickerModule} from 'primeng/datepicker';
-import {formElementStyles, submitButtonStyles} from "./loan-details-form.styles";
+import {formElementStyles, loanDetailsCardStyles, submitButtonStyles} from "./loan-details-form.styles";
 import {ButtonModule} from "primeng/button";
 import {LoanDetailsService} from "../services/loan-details.service";
 import {LoanDetails} from "../domain/loan-details-domain";
+import {Card} from "primeng/card";
 
 @Component({
   selector: 'amort-loan-details',
@@ -17,7 +18,8 @@ import {LoanDetails} from "../domain/loan-details-domain";
     FloatLabel,
     ButtonModule,
     DatePickerModule,
-    InputText
+    InputText,
+    Card
   ],
   templateUrl: './loan-details.component.html',
   styleUrl: './loan-details.component.css'
@@ -30,8 +32,9 @@ export class LoanDetailsComponent implements OnInit {
     startDate: new FormControl(new Date(), Validators.required)
   });
   value: string = 'Test';
-  formElementStyles = formElementStyles;
-  submitButtonStyles = submitButtonStyles;
+  protected readonly formElementStyles = formElementStyles;
+  protected readonly submitButtonStyles = submitButtonStyles;
+  protected readonly loanDetailsCardStyles = loanDetailsCardStyles;
 
   loanDetailsService: LoanDetailsService = inject(LoanDetailsService);
 
