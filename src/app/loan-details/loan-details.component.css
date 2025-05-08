@@ -15,3 +15,8 @@
   position: relative;
   top: -1.25rem;
 }
+
+:host ::ng-deep .custom-date-picker .p-datepicker .p-datepicker-input {
+  background-color: #FFFFFF29;
+  color: white;
+}
