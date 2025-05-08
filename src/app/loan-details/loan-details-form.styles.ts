@@ -1,13 +1,22 @@
+const WHITE_COLOR = '#FFFFFF';
+
+export const loanDetailsCardStyles = {
+  root: {
+    background: `${WHITE_COLOR}29`,
+    color: WHITE_COLOR
+  }
+};
+
 export const formElementStyles = {
   root: {
-    background: '#ffffff29',
-    color: '#ffffff'
+    background: `${WHITE_COLOR}29`,
+    color: WHITE_COLOR
   }
 }
 
 export const submitButtonStyles = {
   root: {
-    color: '#ffffff',
+    color: WHITE_COLOR,
     background: '#1e3a8a'
   }
 }
