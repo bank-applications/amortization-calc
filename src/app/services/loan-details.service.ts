@@ -1,14 +1,14 @@
-import {Injectable} from '@angular/core';
-import {LoanDetails} from "../domain/loan-details-domain";
-import {BehaviorSubject} from "rxjs";
-import {MonthlyInstallment} from "../domain/monthly-installment-domain";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { LoanDetails } from '../domain/loan-details-domain';
+import { MonthlyInstallment, YearlyInstallment } from '../domain/installment-domain';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoanDetailsService {
-
   amortisationReport$ = new BehaviorSubject<MonthlyInstallment[]>([]);
+  private previousEndBalance = 0;
 
   private _loanDetails: LoanDetails = {
     principal: 0,
@@ -17,213 +17,193 @@ export class LoanDetailsService {
     startDate: new Date()
   };
 
-  constructor() {
-    this.initializeAmortisationReport();
-  }
+  constructor() { }
 
   get loanDetails(): LoanDetails {
     return this._loanDetails;
   }
 
   set loanDetails(value: LoanDetails) {
+    this.previousEndBalance = 0;
     this._loanDetails = value;
-    this.loanCalculation();
+    //this.generateAmortisationReport();
   }
 
-  private initializeAmortisationReport(): void {
-    const sampleInstallment: MonthlyInstallment = {
-      dueDate: '2025-05-10',
-      incrementalMonth: 1,
-      startingBalance: 1203434,
-      principalPaid: 1222,
-      interestPaid: 123123,
-      interestRate: 8.8,
-      emiAmount: 46088,
-      partPaymentAmount: 0,
-      totalPaid: 46088,
-      endingBalance: 10191,
-      paymentStatus: 'UPCOMING',
-      paymentDate: new Date('2025-05-10'),
-      remarks: 'Upcoming Due'
-    };
+   generateAmortisationReport(): void {
+    const totalInstallments: MonthlyInstallment[] = [];
+    const currentMonth = this.firstMonth();
+    totalInstallments.push(currentMonth);
+    // calculate for next months
+    this.previousEndBalance = currentMonth.endingBalance;
 
-    this.amortisationReport$.next([sampleInstallment]);
-  }
+    const totalMonths = this._loanDetails.tenure * 12;
 
-  loanCalculation(): void {
-    const data: MonthlyInstallment[] = [
-      {
-        dueDate: '2025-05-10',
-        incrementalMonth: 1,
-        startingBalance: 1200000,
-        principalPaid: 12000,
-        interestPaid: 8800,
-        interestRate: 8.8,
-        emiAmount: 20800,
-        partPaymentAmount: 0,
-        totalPaid: 20800,
-        endingBalance: 1188000,
-        paymentStatus: 'PAID',
-        paymentDate: new Date('2025-05-10'),
-        remarks: 'Paid on time'
-      },
-      {
-        dueDate: '2025-06-10',
-        incrementalMonth: 2,
-        startingBalance: 1188000,
-        principalPaid: 12200,
-        interestPaid: 8700,
-        interestRate: 8.8,
-        emiAmount: 20900,
-        partPaymentAmount: 0,
-        totalPaid: 20900,
-        endingBalance: 1175800,
-        paymentStatus: 'PAID',
-        paymentDate: new Date('2025-06-10'),
-        remarks: 'Paid early'
-      },
-      {
-        dueDate: '2025-07-10',
-        incrementalMonth: 3,
-        startingBalance: 1175800,
-        principalPaid: 12400,
-        interestPaid: 8600,
-        interestRate: 8.8,
-        emiAmount: 21000,
-        partPaymentAmount: 5000,
-        totalPaid: 26000,
-        endingBalance: 1163400,
-        paymentStatus: 'PAID',
-        paymentDate: new Date('2025-07-09'),
-        remarks: 'Part payment included'
-      },
-      {
-        dueDate: '2025-08-10',
-        incrementalMonth: 4,
-        startingBalance: 1163400,
-        principalPaid: 12600,
-        interestPaid: 8500,
-        interestRate: 8.8,
-        emiAmount: 21100,
-        partPaymentAmount: 0,
-        totalPaid: 21100,
-        endingBalance: 1150800,
-        paymentStatus: 'PAID',
-        paymentDate: new Date('2025-08-10'),
-        remarks: 'Regular payment'
-      },
-      {
-        dueDate: '2025-09-10',
-        incrementalMonth: 5,
-        startingBalance: 1150800,
-        principalPaid: 12800,
-        interestPaid: 8400,
-        interestRate: 8.8,
-        emiAmount: 21200,
-        partPaymentAmount: 0,
-        totalPaid: 21200,
-        endingBalance: 1138000,
-        paymentStatus: 'PAID',
-        paymentDate: new Date('2025-09-10'),
-        remarks: 'On schedule'
-      },
-      {
-        dueDate: '2025-10-10',
-        incrementalMonth: 6,
-        startingBalance: 1138000,
-        principalPaid: 13000,
-        interestPaid: 8300,
-        interestRate: 8.8,
-        emiAmount: 21300,
-        partPaymentAmount: 0,
-        totalPaid: 21300,
-        endingBalance: 1125000,
-        paymentStatus: 'PAID',
-        paymentDate: new Date('2025-10-10'),
-        remarks: 'Paid on time'
-      },
-      {
-        dueDate: '2025-11-10',
-        incrementalMonth: 7,
-        startingBalance: 1125000,
-        principalPaid: 13200,
-        interestPaid: 8200,
-        interestRate: 8.8,
-        emiAmount: 21400,
-        partPaymentAmount: 0,
-        totalPaid: 21400,
-        endingBalance: 1111800,
-        paymentStatus: 'PAID',
-        paymentDate: new Date('2025-11-10'),
-        remarks: 'On track'
-      },
-      {
-        dueDate: '2025-12-10',
-        incrementalMonth: 8,
-        startingBalance: 1111800,
-        principalPaid: 13400,
-        interestPaid: 8100,
-        interestRate: 8.8,
-        emiAmount: 21500,
-        partPaymentAmount: 0,
-        totalPaid: 21500,
-        endingBalance: 1098400,
-        paymentStatus: 'UPCOMING',
-        paymentDate: undefined,
-        remarks: 'Upcoming Due'
-      },
-      {
-        dueDate: '2026-01-10',
-        incrementalMonth: 9,
-        startingBalance: 1098400,
-        principalPaid: 13600,
-        interestPaid: 8000,
-        interestRate: 8.8,
-        emiAmount: 21600,
-        partPaymentAmount: 0,
-        totalPaid: 21600,
-        endingBalance: 1084800,
-        paymentStatus: 'UPCOMING',
-        paymentDate: undefined,
-        remarks: 'Upcoming Due'
-      },
-      {
-        dueDate: '2026-02-10',
-        incrementalMonth: 10,
-        startingBalance: 1084800,
-        principalPaid: 13800,
-        interestPaid: 7900,
-        interestRate: 8.8,
-        emiAmount: 21700,
-        partPaymentAmount: 0,
-        totalPaid: 21700,
-        endingBalance: 1071000,
-        paymentStatus: 'UPCOMING',
-        paymentDate: undefined,
-        remarks: 'Upcoming Due'
+    for (let i = 2; i <= totalMonths; i++) {
+      const nextMonth = new MonthlyInstallment();
+
+      nextMonth.incrementalMonth = i;
+      nextMonth.dueDate = this.addMonths(this._loanDetails.startDate, i - 1);
+      nextMonth.paymentDate = nextMonth.dueDate;
+
+      nextMonth.startingBalance = this.previousEndBalance;
+      nextMonth.interestRate = this._loanDetails.roi;
+      nextMonth.emiAmount = this.calculateEMI(this._loanDetails);
+      nextMonth.partPaymentAmount = 0;
+
+      nextMonth.totalPaid = nextMonth.emiAmount;
+      nextMonth.interestPaid = this.calculateInterest(nextMonth);
+      nextMonth.principalPaid = this.calculatePrincipal(nextMonth);
+      nextMonth.endingBalance = this.calculateEndingBalance(nextMonth);
+      nextMonth.paymentStatus = this.getPaymentStatus(nextMonth.paymentDate);
+      nextMonth.remarks = `Installment for month ${i}`;
+
+      this.previousEndBalance = nextMonth.endingBalance;
+
+      // Stop if loan is paid off
+      if (nextMonth.endingBalance <= 0) {
+        nextMonth.endingBalance = 0;
+        totalInstallments.push(nextMonth);
+        break;
       }
-    ];
 
-    this.amortisationReport$.next(data);
+      totalInstallments.push(nextMonth);
+    }
+
+
+    this.amortisationReport$.next([...totalInstallments]);
+    console.log(`amortization calculated with size: ${totalInstallments.length}`)
+
   }
 
-  getReportColumns(): any[] {
+
+  getReportColumns(): { field: string, displayName: string }[] {
     return [
-      {field: 'incrementalMonth', displayName: 'Chronological Month'},
-      {field: 'dueDate', displayName: 'Due Date'},
-      {field: 'startingBalance', displayName: 'Starting Balance'},
-      {field: 'principalPaid', displayName: 'Principal Paid'},
-      {field: 'interestPaid', displayName: 'Interest Paid'},
-      {field: 'interestRate', displayName: 'Interest Rate'},
-      {field: 'emiAmount', displayName: 'EMI'},
-      {field: 'partPaymentAmount', displayName: 'Part Payment Amount'},
-      {field: 'totalPaid', displayName: 'Total Paid'},
-      {field: 'endingBalance', displayName: 'Ending Balance'},
-      {field: 'paymentStatus', displayName: 'Payment Status'},
-      {field: 'paymentDate', displayName: 'Payment Date'},
-      {field: 'remarks', displayName: 'Remarks'}
+      { field: 'startingBalance', displayName: 'Starting Balance' },
+      { field: 'principalPaid', displayName: 'Principal Paid' },
+      { field: 'interestPaid', displayName: 'Interest Paid' },
+      { field: 'emiAmount', displayName: 'EMI' },
+      { field: 'partPaymentAmount', displayName: 'Part Payment' },
+      { field: 'totalPaid', displayName: 'Total Paid' },
+      { field: 'endingBalance', displayName: 'Ending Balance' },
     ]
+
   }
+
+
+  /*
+  ==========================================
+  Monthly Install methods
+  ==========================================
+  */
+
+
+  getMonthlyReportColumns(): any[] {
+    return [
+      { field: 'incrementalMonth', displayName: '# Month' },
+      { field: 'paymentDate', displayName: 'Payment Date' },
+      ...this.getReportColumns(),
+      { field: 'interestRate', displayName: 'Interest Rate' },
+      { field: 'paymentStatus', displayName: 'Status' },
+      { field: 'dueDate', displayName: 'Due Date' },
+      { field: 'remarks', displayName: 'Remarks' }
+    ];
+  }
+
+
+  private firstMonth(): MonthlyInstallment {
+    const firstMonth = new MonthlyInstallment();
+    const loan = this._loanDetails;
+
+    firstMonth.incrementalMonth = 1;
+    firstMonth.dueDate = loan.startDate;
+    firstMonth.paymentDate = loan.startDate;
+    firstMonth.startingBalance = this.calculateStartingBalance();
+    firstMonth.interestRate = loan.roi;
+    firstMonth.emiAmount = this.calculateEMI(loan);
+    firstMonth.partPaymentAmount = 0;
+    firstMonth.totalPaid = firstMonth.emiAmount;
+    firstMonth.interestPaid = this.calculateInterest(firstMonth);
+    firstMonth.principalPaid = this.calculatePrincipal(firstMonth);
+    firstMonth.endingBalance = this.calculateEndingBalance(firstMonth);
+    firstMonth.paymentStatus = this.getPaymentStatus(firstMonth.paymentDate);
+    firstMonth.remarks = 'First month payment.';
+
+    this.previousEndBalance = firstMonth.endingBalance;
+    return firstMonth;
+
+  }
+
+
+  private addMonths(date: Date, months: number): Date {
+    const result = new Date(date);
+    result.setMonth(result.getMonth() + months);
+    return result;
+  }
+
+
+  private calculateStartingBalance(): number {
+    return this.previousEndBalance || this._loanDetails.principal;
+  }
+
+  private calculateInterest(schedule: MonthlyInstallment): number {
+    const monthlyRate = schedule.interestRate / 12 / 100;
+    return (schedule.startingBalance - schedule.partPaymentAmount) * monthlyRate;
+  }
+
+  private calculatePrincipal(schedule: MonthlyInstallment): number {
+    return schedule.emiAmount - schedule.interestPaid;
+  }
+
+  private calculateEndingBalance(schedule: MonthlyInstallment): number {
+    return schedule.startingBalance - schedule.partPaymentAmount - schedule.principalPaid;
+  }
+
+  private calculateEMI(loan: LoanDetails): number {
+    const monthlyRate = loan.roi / 12 / 100;
+    const totalMonths = loan.tenure * 12;
+    const rateFactor = Math.pow(1 + monthlyRate, totalMonths);
+
+    return Math.ceil(loan.principal * monthlyRate * (rateFactor / (rateFactor - 1)));
+  }
+
+  private getPaymentStatus(paymentDate: string | Date): 'PAID' | 'DUE' | 'UPCOMING' {
+    const today = new Date();
+    const payDate = new Date(paymentDate);
+    today.setHours(0, 0, 0, 0);
+    payDate.setHours(0, 0, 0, 0);
+
+    if (payDate.getTime() === today.getTime()) return 'DUE';
+    return payDate < today ? 'PAID' : 'UPCOMING';
+  }
+
+
+
+  /*
+  ==========================================
+  Yearly calculations methods
+  ==========================================
+  */
+
+
+  getYearlyReportColumns(): any[] {
+    return [
+      { field: 'fy', displayName: '# Financial Year' },
+      { field: 'interestRate', displayName: 'Avg Interest Rate' },
+      ...this.getReportColumns()
+    ];
+  }
+
+  getFinancialYear = (currentEmiDate: Date): string => {
+    const currentYear = currentEmiDate.getMonth() < 3 ? currentEmiDate.getFullYear() - 1 : currentEmiDate.getFullYear();
+    const nextYear = currentYear + 1;
+    return `${currentYear}-${nextYear}`;
+  };
+
+
+
+  calculateAvg(yearlyData: YearlyInstallment, monthData: MonthlyInstallment) {
+    return Math.ceil(((yearlyData.interestRate * yearlyData.fYearMonthlyData.length) + monthData.interestRate) / (yearlyData.fYearMonthlyData.length + 1));
+   }
 
 
 }

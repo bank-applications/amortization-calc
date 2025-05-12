@@ -1,37 +1,86 @@
 <div class="amortisation-report-section">
   <p-card header="Amortisation Report" [dt]="cardStyles">
-    <p-table [dt]="tableStyles" [value]="data" dataKey="id"
-             [tableStyle]="customTableStyles" [expandedRowKeys]="expandedRows"
-             [scrollable]="true" [columnResizeMode]="'expand'" [resizableColumns]="true"
-             (onRowExpand)="onRowExpand($event)" (onRowCollapse)="onRowCollapse($event)">
+    <p-table [dt]="tableStyles" [value]="YearlyInstallmentList" dataKey="fy" [tableStyle]="customTableStyles"
+      [expandedRowKeys]="expandedRows" [scrollable]="true" [columnResizeMode]="'expand'" [resizableColumns]="true"
+      (onRowExpand)="onRowExpand($event)" (onRowCollapse)="onRowCollapse($event)">
       <ng-template #header>
         <tr>
           <th style="width: 5rem"></th>
-          <th *ngFor="let column of reportColumns" [pSortableColumn]="column.field">
+          @for ( column of reportYearlyReportColumns; track column) {
+          <th [pSortableColumn]="column.field">
             {{ column.displayName }}
-            <p-sortIcon [field]="column.field"/>
+            <p-sortIcon [field]="column.field" />
           </th>
+          }
         </tr>
       </ng-template>
       <ng-template #body let-record let-expanded="expanded">
         <tr>
           <td>
             <p-button type="button" pRipple [pRowToggler]="record" [text]="true" [rounded]="true" [plain]="true"
-                      [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"  class="expansion-toggle"/>
+              [icon]="expanded? 'pi pi-chevron-down' : 'pi pi-chevron-right'" class="expansion-toggle" />
           </td>
-          <td *ngFor="let column of reportColumns">
-            <span *ngIf="column.field != 'paymentDate' && column.field != 'dueDate'">{{ record[column.field] }}</span>
-            <span
-              *ngIf="column.field == 'paymentDate' || column.field == 'dueDate'">{{ record[column.field] | date }}</span>
+          @for ( column of reportYearlyReportColumns; track column) {
+          <td>
+            @if (column.field === 'paymentDate' || column.field === 'dueDate' ) {
+            <span> {{ record[column.field] | date}} </span>
+            }
+            @else if (column.field === 'interestPaid' || column.field === 'principalPaid' || column.field ===
+            'startingBalance' || column.field === 'endingBalance' ) {
+            <span> {{ record[column.field] | ceil}} </span>
+            }
+            @else {
+            <span> {{ record[column.field]}} </span>
+            }
           </td>
+          }
+
         </tr>
       </ng-template>
-      <ng-template #expandedrow let-product>
+      <ng-template #expandedrow let-record>
         <tr>
-          <td *ngFor="let column of reportColumns">
-
+          <td colspan="7">
+              <div class="p-4">
+                  <h5>Monthly Amortization Report for FY {{ record.fy }}</h5>
+                  <p-table [value]="record.fYearMonthlyData" dataKey="id">
+                      <ng-template #header>
+                          <tr>
+                            @for ( column of reportMonthlyReportColumns; track column) {
+                              <th [pSortableColumn]="column.field">
+                                {{ column.displayName }}
+                                <p-sortIcon [field]="column.field" />
+                              </th>
+                              }
+                          </tr>
+                      </ng-template>
+                      <ng-template #body let-monthOrder>
+                        <tr>
+                          @for ( column of reportMonthlyReportColumns; track column) {
+                            <td>
+                              @if (column.field === 'paymentDate' || column.field === 'dueDate' ) {
+                              <span> {{ monthOrder[column.field] | date}} </span>
+                              }
+                              @else if (column.field === 'interestPaid' || column.field === 'principalPaid' || column.field ===
+                              'startingBalance' || column.field === 'endingBalance' ) {
+                              <span> {{ monthOrder[column.field] | ceil}} </span>
+                              }
+                              @else {
+                              <span> {{ monthOrder[column.field]}} </span>
+                              }
+                            </td>
+                            }
+                        </tr>
+                         
+                      </ng-template>
+                      <ng-template #emptymessage>
+                          <tr>
+                              <td colspan="6">There are no order for this product yet.</td>
+                          </tr>
+                      </ng-template>
+                  </p-table>
+              </div>
           </td>
-        </tr>
+      </tr>
       </ng-template>
     </p-table>
   </p-card>

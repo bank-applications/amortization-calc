@@ -1,5 +1,5 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {FloatLabel} from "primeng/floatlabel";
 import {InputText} from "primeng/inputtext";
 import {DatePickerModule} from 'primeng/datepicker';
@@ -30,13 +30,7 @@ import {Card} from "primeng/card";
   styleUrl: './loan-details.component.css'
 })
 export class LoanDetailsComponent implements OnInit {
-  formGroup = new FormGroup({
-    principal: new FormControl(100000000, [Validators.minLength(2), Validators.required]),
-    roi: new FormControl(8.8, [Validators.minLength(1), Validators.required]),
-    tenure: new FormControl(30, [Validators.minLength(1), Validators.required]),
-    startDate: new FormControl(new Date(), Validators.required)
-  });
-  value: string = 'Test';
+  
   protected readonly formElementStyles = formElementStyles;
   protected readonly submitButtonStyles = submitButtonStyles;
   protected readonly loanDetailsCardStyles = loanDetailsCardStyles;
@@ -44,11 +38,34 @@ export class LoanDetailsComponent implements OnInit {
 
   loanDetailsService: LoanDetailsService = inject(LoanDetailsService);
 
+  loanForm!: FormGroup;
+
+  private fb = inject(FormBuilder);
+
   ngOnInit(): void {
+    this.loanForm = this.fb.group({
+      principal: [0, [Validators.required, Validators.min(1000)]],
+      roi: [0.0, [Validators.required, Validators.min(0.1)]],
+      tenure: [0, [Validators.required, Validators.min(1)]],
+      startDate: [new Date(), Validators.required]
+    });
   }
 
   onSubmitDetails(): void {
-    this.loanDetailsService.loanDetails = this.formGroup.value as LoanDetails;
+    if (this.loanForm.invalid) return;
+
+    const formValue = this.loanForm.value;
+
+    const loanDetails: LoanDetails = {
+      principal: formValue.principal ?? 0,
+      roi: parseFloat(formValue.roi) ?? 0,
+      tenure: formValue.tenure ?? 0,
+      startDate: formValue.startDate ?? new Date()
+    };
+
+    this.loanDetailsService.loanDetails = loanDetails;
+    console.log('Loan Details:', loanDetails);
+    this.loanDetailsService.generateAmortisationReport();
   }
 
 }
