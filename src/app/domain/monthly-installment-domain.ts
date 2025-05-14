@@ -1,5 +1,5 @@
 export interface MonthlyInstallment {
-  dueDate: string;               // e.g., '2025-05-10' (ISO date)
+  dueDate: Date;               // e.g., '2025-05-10' (ISO date)
   incrementalMonth: number;         // e.g., 1,2,3,4,5
   startingBalance: number;       // Outstanding balance at start of month
   principalPaid: number;         // Principal paid this month
