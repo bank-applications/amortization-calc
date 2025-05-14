@@ -1,28 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+@import "primeicons/primeicons.css";
+
+:root {
+  --bg-primary-from: var(--p-blue-800);
+  --bg-primary-to: var(--p-blue-500);
+  --primary-font-color: #FFFFFF;
+  --form-element-background: var(--p-blue-400);
+  --form-element-label-color: var(--p-blue-50);
+  --global-border-color: #FFFFFF33;
+  --primary-button-color: var(--p-blue-400);
+}
+
 body {
-  font-family: Arial, sans-serif;
-}
-
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-h1, h2 {
-  text-align: center;
-}
-
-table {
-  width: 100%;
-  margin-top: 20px;
+  font-family: 'Roboto', sans-serif;
+  color: var(--primary-font-color);
 }
 
 
-input::placeholder {
-  color: #6c757d; /* Adjust the color to fit your theme */
-  opacity: 1; /* Make sure the placeholder is fully visible */
-}
-
-input:focus::placeholder {
-  color: transparent; /* Hide the placeholder on focus if desired */
-}
