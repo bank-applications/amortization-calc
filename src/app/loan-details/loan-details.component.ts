@@ -44,10 +44,10 @@ export class LoanDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loanForm = this.fb.group({
-      principal: [0, [Validators.required, Validators.min(1000)]],
-      roi: [0.0, [Validators.required, Validators.min(0.1)]],
-      tenure: [0, [Validators.required, Validators.min(1)]],
-      startDate: [new Date(), Validators.required]
+      principal: [5000000, [Validators.required, Validators.min(1000)]],
+      roi: [6.6, [Validators.required, Validators.min(0.1)]],
+      tenure: [25, [Validators.required, Validators.min(1)]],
+      startDate: [new Date('03-05-2022'), Validators.required]
     });
   }
 
@@ -64,7 +64,6 @@ export class LoanDetailsComponent implements OnInit {
     };
 
     this.loanDetailsService.loanDetails = loanDetails;
-    console.log('Loan Details:', loanDetails);
     this.loanDetailsService.generateAmortisationReport();
   }
 

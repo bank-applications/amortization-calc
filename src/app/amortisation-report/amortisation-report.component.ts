@@ -28,6 +28,7 @@ import { CeilPipe } from "../ceil.pipe";
 export class AmortisationReportComponent implements OnInit {
   YearlyInstallmentList: YearlyInstallment[] = [];
 
+
   reportMonthlyReportColumns: Column[] = [];
   reportYearlyReportColumns: Column[] = [];
   loanDetailsService: LoanDetailsService = inject(LoanDetailsService);
@@ -41,7 +42,8 @@ export class AmortisationReportComponent implements OnInit {
     this.reportYearlyReportColumns = this.loanDetailsService.getYearlyReportColumns();
 
     this.loanDetailsService.amortisationReport$.subscribe((res: MonthlyInstallment[]) => {
-      console.log(`amortization report component recieved with size: ${res.length}`)
+
+      console.log(res);
 
       //clear 
       this.YearlyInstallmentList = [];
@@ -61,7 +63,7 @@ export class AmortisationReportComponent implements OnInit {
           yearlyData.partPaymentAmount += monthData.partPaymentAmount;
           yearlyData.endingBalance = monthData.endingBalance;
           yearlyData.interestRate = this.loanDetailsService.calculateAvg(yearlyData, monthData);
-          
+
 
 
         } else {
@@ -80,7 +82,6 @@ export class AmortisationReportComponent implements OnInit {
         yearlyData.fYearMonthlyData.push(monthData);
       });
 
-      console.log(this.YearlyInstallmentList)
     });
   }
 
@@ -92,11 +93,26 @@ export class AmortisationReportComponent implements OnInit {
       acc[row.fy] = row.fy === currentFY;
       return acc;
     }, {});
-    console.log(this.expandedRows);
   }
 
   onRowCollapse(event: TableRowCollapseEvent) {
 
+  }
+
+  onRowEditInit(record: MonthlyInstallment) {
+    this.loanDetailsService.onRowEditInit(record);
+  }
+
+  onRowEditSave(record: MonthlyInstallment) {
+    this.loanDetailsService.onRowEditSave(record);
+  }
+
+  onRowEditCancel(record: MonthlyInstallment, index: number, fyear: string) {
+    console.log('onRowEditCancel called', record, index);
+    const yearIndex = this.YearlyInstallmentList.findIndex(yData => yData.fy === fyear);
+    if (yearIndex != -1) {
+      this.YearlyInstallmentList[yearIndex].fYearMonthlyData[index] = this.loanDetailsService.onRowEditCancel(record);
+    }
   }
 
 }
@@ -106,3 +122,10 @@ export interface Column {
   field: string,
   displayName: string,
 }
+
+export interface EditMonthlyRow {
+  interestRate: number,
+  emi: number;
+  partPayment: number;
+  month: number;
+} 

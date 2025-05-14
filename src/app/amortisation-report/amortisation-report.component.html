@@ -1,5 +1,7 @@
 <div class="amortisation-report-section">
   <p-card header="Amortisation Report" [dt]="cardStyles">
+
+    @if (YearlyInstallmentList.length > 0) {
     <p-table [dt]="tableStyles" [value]="YearlyInstallmentList" dataKey="fy" [tableStyle]="customTableStyles"
       [expandedRowKeys]="expandedRows" [scrollable]="true" [columnResizeMode]="'expand'" [resizableColumns]="true"
       (onRowExpand)="onRowExpand($event)" (onRowCollapse)="onRowCollapse($event)">
@@ -29,6 +31,9 @@
             'startingBalance' || column.field === 'endingBalance' ) {
             <span> {{ record[column.field] | ceil}} </span>
             }
+            @else if (column.field === 'interestRate' ) {
+            <span> {{ record[column.field]?.toFixed(2)}} </span>
+            }
             @else {
             <span> {{ record[column.field]}} </span>
             }
@@ -40,48 +45,99 @@
       <ng-template #expandedrow let-record>
         <tr>
           <td colspan="7">
-              <div class="p-4">
-                  <h5>Monthly Amortization Report for FY {{ record.fy }}</h5>
-                  <p-table [value]="record.fYearMonthlyData" dataKey="id">
-                      <ng-template #header>
-                          <tr>
-                            @for ( column of reportMonthlyReportColumns; track column) {
-                              <th [pSortableColumn]="column.field">
-                                {{ column.displayName }}
-                                <p-sortIcon [field]="column.field" />
-                              </th>
-                              }
-                          </tr>
-                      </ng-template>
-                      <ng-template #body let-monthOrder>
-                        <tr>
-                          @for ( column of reportMonthlyReportColumns; track column) {
-                            <td>
-                              @if (column.field === 'paymentDate' || column.field === 'dueDate' ) {
-                              <span> {{ monthOrder[column.field] | date}} </span>
-                              }
-                              @else if (column.field === 'interestPaid' || column.field === 'principalPaid' || column.field ===
-                              'startingBalance' || column.field === 'endingBalance' ) {
-                              <span> {{ monthOrder[column.field] | ceil}} </span>
-                              }
-                              @else {
-                              <span> {{ monthOrder[column.field]}} </span>
-                              }
-                            </td>
-                            }
-                        </tr>
-                         
-                      </ng-template>
-                      <ng-template #emptymessage>
-                          <tr>
-                              <td colspan="6">There are no order for this product yet.</td>
-                          </tr>
-                      </ng-template>
-                  </p-table>
-              </div>
+            <div class="p-4">
+              <h5>Monthly Amortization Report for FY {{ record.fy }}</h5>
+              <p-table [value]="record.fYearMonthlyData" dataKey="incrementalMonth" editMode="row">
+                <ng-template #header>
+        <tr>
+          @for ( column of reportMonthlyReportColumns; track column) {
+          <th [pSortableColumn]="column.field">
+            {{ column.displayName }}
+            <p-sortIcon [field]="column.field" />
+          </th>
+          }
+        </tr>
+      </ng-template>
+      <ng-template #body let-monthOrder let-editing="editing" let-ri="rowIndex">
+        <tr [pEditableRow]="monthOrder">
+          @for ( column of reportMonthlyReportColumns; track column) {
+          @if (column.field === 'paymentDate' || column.field === 'dueDate' ) {
+          <td> {{ monthOrder[column.field] | date}} </td>
+          }
+          @else if (column.field === 'interestPaid' || column.field === 'principalPaid' || column.field ===
+          'startingBalance' || column.field === 'endingBalance') {
+          <td> {{ monthOrder[column.field] | ceil}} </td>
+          }
+
+          @else if (column.field === 'interestRate' && editing) {
+          <td [pEditableColumn]="monthOrder.interestRate" pEditableColumnField="interestRate">
+            <p-cellEditor>
+              <ng-template #input>
+                <input pInputText type="number" [(ngModel)]="monthOrder[column.field]" />
+              </ng-template>
+              <ng-template #output>
+                {{monthOrder[column.field] }}
+              </ng-template>
+            </p-cellEditor>
           </td>
-      </tr>
+          }
+          @else if (column.field === 'emiAmount' && editing) {
+          <td pEditableColumnField="emiAmount">
+            <p-cellEditor>
+              <ng-template #input>
+                <input pInputText type="number" [(ngModel)]="monthOrder[column.field]" />
+              </ng-template>
+              <ng-template #output>
+                {{monthOrder[column.field] }}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          }
+          @else if (column.field === 'partPaymentAmount' && editing) {
+          <td pEditableColumnField="partPaymentAmount">
+            <p-cellEditor>
+              <ng-template #input>
+                <input pInputText type="number" [(ngModel)]="monthOrder[column.field]" />
+              </ng-template>
+              <ng-template #output>
+                {{monthOrder[column.field] }}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+          } @else {
+          <td> {{ monthOrder[column.field]}} </td>
+          }
+          }
+
+          <td>
+            <div class="flex items-center justify-center gap-2">
+              @if (!editing) {
+              <button pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                (click)="onRowEditInit(monthOrder)" text rounded severity="secondary"></button>
+              } @else {
+              <button pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                (click)="onRowEditSave(monthOrder)" text rounded severity="secondary"></button>
+              <button pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                (click)="onRowEditCancel(monthOrder, ri, record.fy)" text rounded severity="secondary"></button>
+              }
+
+
+            </div>
+          </td>
+        </tr>
+
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="6">There are no order for this product yet.</td>
+        </tr>
       </ng-template>
     </p-table>
-  </p-card>
+</div>
+</td>
+</tr>
+</ng-template>
+</p-table>
+}
+</p-card>
 </div>

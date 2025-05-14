@@ -43,7 +43,6 @@ export class AmortizationScheduleComponent implements OnInit {
       yearlyMap.set(year, currentYear);
     });
     this.yearlyTotals = [...yearlyMap.values()];
-    console.log(this.yearlyTotals)
   }
 
   toggleCollapse(year: number) {
