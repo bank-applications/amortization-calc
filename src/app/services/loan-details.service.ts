@@ -18,7 +18,6 @@ export class LoanDetailsService {
   };
 
   constructor() {
-    this.initializeAmortisationReport();
   }
 
   get loanDetails(): LoanDetails {
@@ -30,181 +29,66 @@ export class LoanDetailsService {
     this.loanCalculation();
   }
 
-  private initializeAmortisationReport(): void {
-    const sampleInstallment: MonthlyInstallment = {
-      dueDate: '2025-05-10',
-      incrementalMonth: 1,
-      startingBalance: 1203434,
-      principalPaid: 1222,
-      interestPaid: 123123,
-      interestRate: 8.8,
-      emiAmount: 46088,
-      partPaymentAmount: 0,
-      totalPaid: 46088,
-      endingBalance: 10191,
-      paymentStatus: 'UPCOMING',
-      paymentDate: new Date('2025-05-10'),
-      remarks: 'Upcoming Due'
-    };
+  loanCalculation(): void {
+    const {principal, roi, tenure, startDate} = this.loanDetails;
+    const monthlyRate = roi / 12 / 100;
+    const tenureInMonths = tenure * 12;
+    const emi = this.calculateEMI(principal, monthlyRate, tenureInMonths);
+    const installments: MonthlyInstallment[] = [];
 
-    this.amortisationReport$.next([sampleInstallment]);
+    let balance = principal;
+    let currentDate = new Date(startDate);
+    const today = new Date();
+
+    for (let i = 1; i <= tenureInMonths; i++) {
+      const interest = balance * monthlyRate;
+      const principalPaid = emi - interest;
+      const partPayment = 0;
+      const totalPaid = emi + partPayment;
+      const endingBalance = Math.max(0, balance - principalPaid - partPayment);
+
+      const status =
+        currentDate < today ? 'PAID' :
+          currentDate.toDateString() === today.toDateString() ? 'DUE' : 'UPCOMING';
+
+      installments.push({
+        dueDate: new Date(currentDate),
+        incrementalMonth: i,
+        startingBalance: Math.round(balance),
+        principalPaid: Math.round(principalPaid),
+        interestPaid: Math.round(interest),
+        interestRate: parseFloat((monthlyRate * 100).toFixed(2)),
+        emiAmount: Math.round(emi),
+        partPaymentAmount: partPayment,
+        totalPaid: Math.round(totalPaid),
+        endingBalance: Math.round(endingBalance),
+        paymentStatus: status,
+        paymentDate: status === 'PAID' ? new Date(currentDate) : undefined,
+        remarks: status === 'UPCOMING' ? 'Upcoming Due' : status === 'DUE' ? 'Due Today' : 'Paid'
+      });
+
+      balance = endingBalance;
+      currentDate.setMonth(currentDate.getMonth() + 1);
+    }
+
+    this.amortisationReport$.next(installments);
   }
 
-  loanCalculation(): void {
-    const data: MonthlyInstallment[] = [
-      {
-        dueDate: '2025-05-10',
-        incrementalMonth: 1,
-        startingBalance: 1200000,
-        principalPaid: 12000,
-        interestPaid: 8800,
-        interestRate: 8.8,
-        emiAmount: 20800,
-        partPaymentAmount: 0,
-        totalPaid: 20800,
-        endingBalance: 1188000,
-        paymentStatus: 'PAID',
-        paymentDate: new Date('2025-05-10'),
-        remarks: 'Paid on time'
-      },
-      {
-        dueDate: '2025-06-10',
-        incrementalMonth: 2,
-        startingBalance: 1188000,
-        principalPaid: 12200,
-        interestPaid: 8700,
-        interestRate: 8.8,
-        emiAmount: 20900,
-        partPaymentAmount: 0,
-        totalPaid: 20900,
-        endingBalance: 1175800,
-        paymentStatus: 'PAID',
-        paymentDate: new Date('2025-06-10'),
-        remarks: 'Paid early'
-      },
-      {
-        dueDate: '2025-07-10',
-        incrementalMonth: 3,
-        startingBalance: 1175800,
-        principalPaid: 12400,
-        interestPaid: 8600,
-        interestRate: 8.8,
-        emiAmount: 21000,
-        partPaymentAmount: 5000,
-        totalPaid: 26000,
-        endingBalance: 1163400,
-        paymentStatus: 'PAID',
-        paymentDate: new Date('2025-07-09'),
-        remarks: 'Part payment included'
-      },
-      {
-        dueDate: '2025-08-10',
-        incrementalMonth: 4,
-        startingBalance: 1163400,
-        principalPaid: 12600,
-        interestPaid: 8500,
-        interestRate: 8.8,
-        emiAmount: 21100,
-        partPaymentAmount: 0,
-        totalPaid: 21100,
-        endingBalance: 1150800,
-        paymentStatus: 'PAID',
-        paymentDate: new Date('2025-08-10'),
-        remarks: 'Regular payment'
-      },
-      {
-        dueDate: '2025-09-10',
-        incrementalMonth: 5,
-        startingBalance: 1150800,
-        principalPaid: 12800,
-        interestPaid: 8400,
-        interestRate: 8.8,
-        emiAmount: 21200,
-        partPaymentAmount: 0,
-        totalPaid: 21200,
-        endingBalance: 1138000,
-        paymentStatus: 'PAID',
-        paymentDate: new Date('2025-09-10'),
-        remarks: 'On schedule'
-      },
-      {
-        dueDate: '2025-10-10',
-        incrementalMonth: 6,
-        startingBalance: 1138000,
-        principalPaid: 13000,
-        interestPaid: 8300,
-        interestRate: 8.8,
-        emiAmount: 21300,
-        partPaymentAmount: 0,
-        totalPaid: 21300,
-        endingBalance: 1125000,
-        paymentStatus: 'PAID',
-        paymentDate: new Date('2025-10-10'),
-        remarks: 'Paid on time'
-      },
-      {
-        dueDate: '2025-11-10',
-        incrementalMonth: 7,
-        startingBalance: 1125000,
-        principalPaid: 13200,
-        interestPaid: 8200,
-        interestRate: 8.8,
-        emiAmount: 21400,
-        partPaymentAmount: 0,
-        totalPaid: 21400,
-        endingBalance: 1111800,
-        paymentStatus: 'PAID',
-        paymentDate: new Date('2025-11-10'),
-        remarks: 'On track'
-      },
-      {
-        dueDate: '2025-12-10',
-        incrementalMonth: 8,
-        startingBalance: 1111800,
-        principalPaid: 13400,
-        interestPaid: 8100,
-        interestRate: 8.8,
-        emiAmount: 21500,
-        partPaymentAmount: 0,
-        totalPaid: 21500,
-        endingBalance: 1098400,
-        paymentStatus: 'UPCOMING',
-        paymentDate: undefined,
-        remarks: 'Upcoming Due'
-      },
-      {
-        dueDate: '2026-01-10',
-        incrementalMonth: 9,
-        startingBalance: 1098400,
-        principalPaid: 13600,
-        interestPaid: 8000,
-        interestRate: 8.8,
-        emiAmount: 21600,
-        partPaymentAmount: 0,
-        totalPaid: 21600,
-        endingBalance: 1084800,
-        paymentStatus: 'UPCOMING',
-        paymentDate: undefined,
-        remarks: 'Upcoming Due'
-      },
-      {
-        dueDate: '2026-02-10',
-        incrementalMonth: 10,
-        startingBalance: 1084800,
-        principalPaid: 13800,
-        interestPaid: 7900,
-        interestRate: 8.8,
-        emiAmount: 21700,
-        partPaymentAmount: 0,
-        totalPaid: 21700,
-        endingBalance: 1071000,
-        paymentStatus: 'UPCOMING',
-        paymentDate: undefined,
-        remarks: 'Upcoming Due'
-      }
-    ];
+  calculateEMI(principal: number, monthlyRate: number, tenure: number): number {
+    if (monthlyRate === 0) return principal / tenure;
+    const factor = Math.pow(1 + monthlyRate, tenure);
+    return principal * monthlyRate * factor / (factor - 1);
+  }
 
-    this.amortisationReport$.next(data);
+  isExactlyOneMonthApart(date1: Date, date2: Date): boolean {
+    const adjusted = new Date(date1);
+    adjusted.setMonth(adjusted.getMonth() + 1);
+
+    return (
+      adjusted.getFullYear() === date2.getFullYear() &&
+      adjusted.getMonth() === date2.getMonth() &&
+      adjusted.getDate() === date2.getDate()
+    );
   }
 
   getReportColumns(): any[] {
