@@ -1,4 +1,4 @@
 <div class="container-fluid">
   <div class="loan-details-section"><amort-loan-details></amort-loan-details></div>
-  <ng-container><amort-amortisation-report></amort-amortisation-report></ng-container>
+  <ng-container *ngIf="displayReport"><amort-amortisation-report></amort-amortisation-report></ng-container>
 </div>
