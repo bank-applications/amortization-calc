@@ -29,9 +29,12 @@ export class LoanDetailsService {
   }
 
   set loanDetails(value: LoanDetails) {
-    this.previousEndBalance = 0;
     this._loanDetails = value;
-    //this.generateAmortisationReport();
+  }
+
+  saveLoanDetails(loanDetails: LoanDetails): void {
+    this.loanDetails = loanDetails;
+    this.generateAmortisationReport();
   }
 
   generateAmortisationReport(): void {

@@ -1,5 +1,5 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {FloatLabel} from "primeng/floatlabel";
 import {InputText} from "primeng/inputtext";
 import {DatePickerModule} from 'primeng/datepicker';
@@ -11,7 +11,6 @@ import {
 } from "./loan-details-form.styles";
 import {ButtonModule} from "primeng/button";
 import {LoanDetailsService} from "../services/loan-details.service";
-import {LoanDetails} from "../domain/loan-details-domain";
 import {Card} from "primeng/card";
 
 @Component({
@@ -30,7 +29,7 @@ import {Card} from "primeng/card";
   styleUrl: './loan-details.component.css'
 })
 export class LoanDetailsComponent implements OnInit {
-  
+
   protected readonly formElementStyles = formElementStyles;
   protected readonly submitButtonStyles = submitButtonStyles;
   protected readonly loanDetailsCardStyles = loanDetailsCardStyles;
@@ -53,18 +52,7 @@ export class LoanDetailsComponent implements OnInit {
 
   onSubmitDetails(): void {
     if (this.loanForm.invalid) return;
-
-    const formValue = this.loanForm.value;
-
-    const loanDetails: LoanDetails = {
-      principal: formValue.principal ?? 0,
-      roi: parseFloat(formValue.roi) ?? 0,
-      tenure: formValue.tenure ?? 0,
-      startDate: formValue.startDate ?? new Date()
-    };
-
-    this.loanDetailsService.loanDetails = loanDetails;
-    this.loanDetailsService.generateAmortisationReport();
+    this.loanDetailsService.saveLoanDetails(this.loanForm.value);
   }
 
 }
