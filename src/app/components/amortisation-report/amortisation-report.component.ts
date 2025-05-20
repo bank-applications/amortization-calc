@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { LoanDetailsService } from "../services/loan-details.service";
+import { LoanDetailsService } from "../../services/loan-details.service";
 import { TableModule, TableRowCollapseEvent, TableRowExpandEvent } from "primeng/table";
 import { Button } from "primeng/button";
 import { Ripple } from "primeng/ripple";
@@ -8,8 +8,7 @@ import { FormsModule } from "@angular/forms";
 import { DatePipe, NgForOf, NgIf } from "@angular/common";
 import { cardStyles, tableStyles } from "./amortisation-report-table.styles";
 import { Card } from "primeng/card";
-import { MonthlyInstallment, YearlyInstallment } from '../domain/installment-domain';
-import { CeilPipe } from "../ceil.pipe";
+import { MonthlyInstallment, YearlyInstallment } from '../../domain/installment-domain';
 
 @Component({
   selector: 'amort-amortisation-report',
@@ -19,8 +18,7 @@ import { CeilPipe } from "../ceil.pipe";
     Ripple,
     FormsModule,
     DatePipe,
-    Card,
-    CeilPipe
+    Card
   ],
   templateUrl: './amortisation-report.component.html',
   styleUrl: './amortisation-report.component.css'

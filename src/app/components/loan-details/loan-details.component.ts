@@ -10,8 +10,8 @@ import {
   submitButtonStyles
 } from "./loan-details-form.styles";
 import {ButtonModule} from "primeng/button";
-import {LoanDetailsService} from "../services/loan-details.service";
-import {LoanDetails} from "../domain/loan-details-domain";
+import {LoanDetailsService} from "../../services/loan-details.service";
+import {LoanDetails} from "../../domain/loan-details-domain";
 import {Card} from "primeng/card";
 
 @Component({
