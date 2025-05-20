@@ -29,7 +29,7 @@
             }
             @else if (column.field === 'interestPaid' || column.field === 'principalPaid' || column.field ===
             'startingBalance' || column.field === 'endingBalance' ) {
-            <span> {{ record[column.field] | ceil}} </span>
+            <span> {{ record[column.field].toFixed()}} </span>
             }
             @else if (column.field === 'interestRate' ) {
             <span> {{ record[column.field]?.toFixed(2)}} </span>
@@ -66,7 +66,7 @@
           }
           @else if (column.field === 'interestPaid' || column.field === 'principalPaid' || column.field ===
           'startingBalance' || column.field === 'endingBalance') {
-          <td> {{ monthOrder[column.field] | ceil}} </td>
+          <td> {{ monthOrder[column.field].toFixed(0)}} </td>
           }
 
           @else if (column.field === 'interestRate' && editing) {
