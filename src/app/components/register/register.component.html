@@ -1,35 +1,91 @@
 <div class="container mt-5" style="max-width: 400px;">
-    <h3 class="mb-4 text-center">Register</h3>
-
-    <div class="mb-3">
+    <h2 class="mb-4">Register</h2>
+  
+    <form #form="ngForm" (ngSubmit)="register(form)" novalidate>
+      <!-- Username -->
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          class="form-control"
+          [(ngModel)]="username"
+          #usernameCtrl="ngModel"
+          required
+          minlength="3"
+        />
+        <div
+          *ngIf="usernameCtrl.invalid && (usernameCtrl.dirty || usernameCtrl.touched)"
+          class="text-danger small mt-1"
+        >
+          <div *ngIf="usernameCtrl.errors?.['required']">Username is required.</div>
+          <div *ngIf="usernameCtrl.errors?.['minlength']">
+            Username must be at least 3 characters.
+          </div>
+        </div>
+      </div>
+  
+      <!-- Email -->
+      <div class="mb-3">
         <label for="email" class="form-label">Email address</label>
-        <input [(ngModel)]="email" type="email" class="form-control" id="email" placeholder="Enter email" />
-    </div>
-
-    <div class="mb-3">
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="form-control"
+          [(ngModel)]="email"
+          #emailCtrl="ngModel"
+          required
+          email
+        />
+        <div
+          *ngIf="emailCtrl.invalid && (emailCtrl.dirty || emailCtrl.touched)"
+          class="text-danger small mt-1"
+        >
+          <div *ngIf="emailCtrl.errors?.['required']">Email is required.</div>
+          <div *ngIf="emailCtrl.errors?.['email']">Invalid email format.</div>
+        </div>
+      </div>
+  
+      <!-- Password -->
+      <div class="mb-3">
         <label for="password" class="form-label">Password</label>
-        <input [(ngModel)]="password" type="password" class="form-control" id="password" placeholder="Password" />
-    </div>
-
-    <div class="mb-3">
-        <label for="confirmPassword" class="form-label">Confirm Password</label>
-        <input [(ngModel)]="confirmPassword" type="password" class="form-control" id="confirmPassword"
-            placeholder="Confirm Password" />
-    </div>
-
-    <button (click)="register()" class="btn btn-success w-100 mb-3">
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="form-control"
+          [(ngModel)]="password"
+          #passwordCtrl="ngModel"
+          required
+          minlength="6"
+        />
+        <div
+          *ngIf="passwordCtrl.invalid && (passwordCtrl.dirty || passwordCtrl.touched)"
+          class="text-danger small mt-1"
+        >
+          <div *ngIf="passwordCtrl.errors?.['required']">Password is required.</div>
+          <div *ngIf="passwordCtrl.errors?.['minlength']">
+            Password must be at least 6 characters.
+          </div>
+        </div>
+      </div>
+  
+      <button
+        type="submit"
+        class="btn btn-primary w-100"
+        [disabled]="form.invalid"
+      >
         Register
-    </button>
-
+      </button>
+    </form>
+  
     <p class="text-center mt-3">
-        Already have an account? <a routerLink="/login"  class="custom-link">Login here</a>
+      Already have an account?
+      <a routerLink="/login" class="text-decoration-underline" class="custom-link" >Login here</a>
     </p>
-
-    @if (status) {
-    <div class="mt-3">
-        <small>{{ status }}</small>
-    </div>
-    }
-
-</div>
-
+  
+    <div class="mt-3 text-center" *ngIf="status">{{ status }}</div>
+  </div>
+  

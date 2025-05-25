@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
 
@@ -14,27 +14,25 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class RegisterComponent {
 
+  
   email = '';
   password = '';
-  confirmPassword = '';
+  username = '';
   status = '';
 
   private auth = inject(Auth);
   private router = inject(Router);
 
-  register() {
-    if (this.password !== this.confirmPassword) {
-      this.status = 'Passwords do not match';
-      return;
-    }
+  register(form: NgForm) {
+    if (!form.valid) return;
+
     createUserWithEmailAndPassword(this.auth, this.email, this.password)
-      .then(res => {
-        this.status = `Registered successfully: ${res.user.email}`;
-        this.router.navigate(['/login']);
+      .then((res) => {
+        this.status = `Registered: ${res.user.email}`;
+        this.router.navigate(['/dashboard']); // Navigate after success
       })
-      .catch(err => {
+      .catch((err) => {
         this.status = `Error: ${err.message}`;
       });
   }
-
 }
