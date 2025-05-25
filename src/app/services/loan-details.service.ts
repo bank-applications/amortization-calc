@@ -56,7 +56,7 @@ export class LoanDetailsService {
       nextMonth.startingBalance = this.previousEndBalance;
 
       // set edited values of emi, roi and partPayment otherwise set prev values for emi and roi and set partpay as zero
-      const editedRecord = this.clonedRows[i];
+      const editedRecord = this.clonedRows[nextMonth.paymentDate ?.toDateString() as string];
       if (editedRecord) {
         const { emiAmount, interestRate, partPaymentAmount }: MonthlyInstallment = editedRecord;
         nextMonth.emiAmount = emiAmount;
@@ -254,7 +254,7 @@ export class LoanDetailsService {
 
   onRowEditSave(record: MonthlyInstallment) {
     console.log('onRowEditSave called', record);
-    this.clonedRows[record.incrementalMonth as number] = record;
+    this.clonedRows[record.paymentDate?.toDateString() as string] = record;
     this.generateAmortisationReport();
   }
 
