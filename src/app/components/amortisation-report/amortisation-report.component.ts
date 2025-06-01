@@ -8,7 +8,9 @@ import { FormsModule } from "@angular/forms";
 import { DatePipe, NgForOf, NgIf } from "@angular/common";
 import { cardStyles, tableStyles } from "./amortisation-report-table.styles";
 import { Card } from "primeng/card";
+import { ToolbarModule } from "primeng/toolbar";
 import { MonthlyInstallment, YearlyInstallment } from '../../domain/installment-domain';
+import { FireBaseService } from '../../services/fire-base.service';
 
 @Component({
   selector: 'amort-amortisation-report',
@@ -18,7 +20,8 @@ import { MonthlyInstallment, YearlyInstallment } from '../../domain/installment-
     Ripple,
     FormsModule,
     DatePipe,
-    Card
+    Card,
+    ToolbarModule
   ],
   templateUrl: './amortisation-report.component.html',
   styleUrl: './amortisation-report.component.css'
@@ -30,6 +33,8 @@ export class AmortisationReportComponent implements OnInit {
   reportMonthlyReportColumns: Column[] = [];
   reportYearlyReportColumns: Column[] = [];
   loanDetailsService: LoanDetailsService = inject(LoanDetailsService);
+  fireBaseServices: FireBaseService = inject(FireBaseService);
+
   expandedRows = {};
   protected readonly tableStyles = tableStyles;
   protected readonly cardStyles = cardStyles;
@@ -109,8 +114,16 @@ export class AmortisationReportComponent implements OnInit {
     console.log('onRowEditCancel called', record, index);
     const yearIndex = this.YearlyInstallmentList.findIndex(yData => yData.fy === fyear);
     if (yearIndex != -1) {
-      this.YearlyInstallmentList[yearIndex].fYearMonthlyData[index] = this.loanDetailsService.onRowEditCancel(record);
+      this.YearlyInstallmentList[yearIndex].fYearMonthlyData[index] = this.loanDetailsService.onRowEditCancel(record)?? record;
     }
+  }
+
+  saveChanges(event: Event) {
+    this.fireBaseServices.saveChanges(event, this.YearlyInstallmentList);
+  }
+
+  exportCSV(event: Event) {
+    this.fireBaseServices.exportCSV(event, this.YearlyInstallmentList);
   }
 
 }
