@@ -1,0 +1,11 @@
+.custom-link {
+    color: orange;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  
+  .custom-link:hover {
+    color: yellow;
+    text-decoration: none;
+  }
+  
