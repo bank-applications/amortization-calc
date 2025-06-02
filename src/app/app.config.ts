@@ -8,6 +8,7 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import {routes} from './app.routes';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {providePrimeNG} from 'primeng/config';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import Aura from '@primeng/themes/aura';
 import {FormsModule} from "@angular/forms";
 import { environment } from '../environments/environment';
@@ -27,7 +28,8 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(FormsModule),
     provideRouter(routes),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideAuth(() => getAuth())
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()) 
   ]
 };
 

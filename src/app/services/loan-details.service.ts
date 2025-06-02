@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { LoanDetails } from '../domain/loan-details-domain';
 import { MonthlyInstallment, YearlyInstallment } from '../domain/installment-domain';
+import { AmortizationInstallment } from '../domain/firebase-domain';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class LoanDetailsService {
   private previousInterestRate = 0;
 
 
-  clonedRows: { [s: string]: MonthlyInstallment } = {};
+  clonedRows: { [s: string]: AmortizationInstallment } = {};
 
   private _loanDetails: LoanDetails = {
     principal: 0,
@@ -56,9 +57,13 @@ export class LoanDetailsService {
       nextMonth.startingBalance = this.previousEndBalance;
 
       // set edited values of emi, roi and partPayment otherwise set prev values for emi and roi and set partpay as zero
-      const editedRecord = this.clonedRows[nextMonth.paymentDate ?.toDateString() as string];
+      let editedRecord: AmortizationInstallment | null = null;
+      const key = this.formatDateKey(nextMonth.paymentDate);
+      if (key !== '') {
+        editedRecord = this.clonedRows[key];
+      }
       if (editedRecord) {
-        const { emiAmount, interestRate, partPaymentAmount }: MonthlyInstallment = editedRecord;
+        const { emiAmount, interestRate, partPaymentAmount }: AmortizationInstallment = editedRecord;
         nextMonth.emiAmount = emiAmount;
         nextMonth.interestRate = interestRate;
         nextMonth.partPaymentAmount = partPaymentAmount;
@@ -249,19 +254,64 @@ export class LoanDetailsService {
   */
 
   onRowEditInit(record: MonthlyInstallment) {
-    this.clonedRows[record.incrementalMonth as number] = { ...record };
+    const key = this.formatDateKey(record.paymentDate);
+    if (key !== '') {
+     this.clonedRows[key] = {
+        key: key,
+        emiAmount: record.emiAmount,
+        partPaymentAmount: record.partPaymentAmount,
+        interestRate: record.interestRate
+      };
+    }
   }
 
   onRowEditSave(record: MonthlyInstallment) {
-    console.log('onRowEditSave called', record);
-    this.clonedRows[record.paymentDate?.toDateString() as string] = record;
+    const key = this.formatDateKey(record.paymentDate);
+    if (key !== '') {
+      this.clonedRows[key] = {
+        key: key,
+        emiAmount: record.emiAmount,
+        partPaymentAmount: record.partPaymentAmount,
+        interestRate: record.interestRate
+      };
+    }
     this.generateAmortisationReport();
+    this.cleanClonedRows();
+  }
+
+  // check if cloned rows are having any keys more than last payment date
+  // if yes then remove those keys from cloned rows
+  private cleanClonedRows(): void {
+    // Get the latest payment date from the amortisation report
+    const report = this.amortisationReport$.getValue();
+    if (!report.length) return;
+
+    const lastPaymentDate = report[report.length - 1].paymentDate;
+
+    // Remove any clonedRows with a key greater than the last payment date
+    Object.keys(this.clonedRows).forEach(key => {
+      const keyDate = new Date(key);
+      if (lastPaymentDate && keyDate > new Date(lastPaymentDate)) {
+        delete this.clonedRows[key];
+      }
+    });
   }
 
   onRowEditCancel(record: MonthlyInstallment) {
-    const record2 = { ...this.clonedRows[record.incrementalMonth as number] };
-    delete this.clonedRows[record.incrementalMonth as number];
-    return record2;
+    const key = this.formatDateKey(record.paymentDate);
+    if (key !== '') {
+      const record2 = { ...this.clonedRows[key] };
+      delete this.clonedRows[key];
+      return record2;
+    }
+    return null;
   }
+
+  formatDateKey(date?: Date): string {
+    return date instanceof Date && !isNaN(date.getTime())
+      ? date.toISOString().slice(0, 10)
+      : '';
+  }
+
 
 }
