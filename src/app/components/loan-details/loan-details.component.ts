@@ -64,9 +64,9 @@ export class LoanDetailsComponent implements OnInit {
     const formValue = this.loanForm.value;
 
     const loanDetails: LoanDetails = {
-      principal: formValue.principal ?? 0,
+      principal: parseFloat(formValue.principal) ?? 0,
       roi: parseFloat(formValue.roi) ?? 0,
-      tenure: formValue.tenure ?? 0,
+      tenure: parseFloat(formValue.tenure) ?? 0,
       startDate: formValue.startDate ?? new Date()
     };
 
