@@ -1,6 +1,6 @@
-import { LoanDetails } from "./loan-details-domain";
+import { Timestamp } from "firebase/firestore";
 
-export interface FirebaseTransDomain {
+export interface FireBaseDoc {
     loanDetails: LoanDetails;
     modifiedInstallments: AmortizationInstallment[];
     userId: string;        
@@ -9,7 +9,15 @@ export interface FirebaseTransDomain {
 
    
 export interface AmortizationInstallment { 
+    key: string;
     emiAmount: number;
     partPaymentAmount: number;
     interestRate: number;
 }   
+
+export interface LoanDetails {
+  principal: number,
+  roi: number,
+  tenure: number,
+  startDate: Timestamp
+}

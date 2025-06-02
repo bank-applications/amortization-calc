@@ -43,13 +43,21 @@ export class LoanDetailsComponent implements OnInit {
   private fb = inject(FormBuilder);
 
   ngOnInit(): void {
+    console.log('Initializing LoanDetailsComponent', this.loanDetailsService.loanDetails);
     this.loanForm = this.fb.group({
-      principal: [5000000, [Validators.required, Validators.min(1000)]],
-      roi: [6.6, [Validators.required, Validators.min(0.1)]],
-      tenure: [25, [Validators.required, Validators.min(1)]],
-      startDate: [new Date('03-05-2022'), Validators.required]
+      principal: [0, [Validators.required, Validators.min(1000)]],
+      roi: [0, [Validators.required, Validators.min(0.1)]],
+      tenure: [0, [Validators.required, Validators.min(1)]],
+      startDate: [new Date(), Validators.required]
     });
-  }
+
+  this.loanForm.setValue(this.loanDetailsService.loanDetails || {
+    principal: 0,
+    roi: 0,   
+    tenure: 0,
+    startDate: new Date()
+  });
+}
 
   onSubmitDetails(): void {
     if (this.loanForm.invalid) return;

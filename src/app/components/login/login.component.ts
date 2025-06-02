@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Auth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from '@angular/fire/auth';
+import { Auth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged, User } from '@angular/fire/auth';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FireBaseService } from '../../services/fire-base.service';
@@ -25,11 +25,25 @@ export class LoginComponent {
   password = '';
   status = '';
 
+  constructor() {
+    onAuthStateChanged(this.auth, async (user: User | null) => {
+      if (user) {
+        // User is signed in (could be SSO auto-login)
+        console.log('User is signed in:', user);
+        this.status = `Auto-login: ${user.email}`;
+        await this.firebaseService.loadCurrentUser();
+        await this.firebaseService.loadUserLoanDetails();
+        this.router.navigate(['dashboard']);
+      }
+    });
+  }
+
   loginWithEmail() {
     signInWithEmailAndPassword(this.auth, this.email, this.password)
       .then(async res => {
         this.status = `Logged in: ${res.user.email}`;
-         this.firebaseService.loadCurrentUser();
+        await this.firebaseService.loadCurrentUser();
+        await this.firebaseService.loadUserLoanDetails(); 
         this.router.navigate(['dashboard']); // 👈 navigate to dashboard
       })
       .catch(err => this.status = `Error: ${err.message}`);
@@ -41,6 +55,7 @@ export class LoginComponent {
       .then(async res => {
         this.status = `Google login success: ${res.user.email}`;
         await this.firebaseService.loadCurrentUser();
+        await this.firebaseService.loadUserLoanDetails(); 
         this.router.navigate(['dashboard']); // 👈 navigate to dashboard
 
       })

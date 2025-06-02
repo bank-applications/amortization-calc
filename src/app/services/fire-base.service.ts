@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { LoanDetailsService } from './loan-details.service';
 import { User } from 'firebase/auth';
-import { AmortizationInstallment, FirebaseTransDomain } from '../domain/firebase-domain';
+import { AmortizationInstallment, FireBaseDoc } from '../domain/firebase-domain';
 import { Auth } from '@angular/fire/auth';
-import { Firestore, collection, query, where, getDocs, deleteDoc, addDoc, doc } from '@angular/fire/firestore';
+import { Firestore, collection, query, where, getDocs, deleteDoc, addDoc, doc, DocumentData, DocumentReference, updateDoc, Timestamp } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +27,42 @@ export class FireBaseService {
     this.currentUser = this.auth.currentUser;
   }
 
+  async loadUserLoanDetails(): Promise<void> {
+    // get the current user
+    console.log('Loading user loan details...');
+    const userId = this.getStoredUser()?.uid;
+    if (!userId) {
+      console.error('No user is currently logged in.');
+    }
+    // Query Firestore for the user's loan details
+    const loanDetailsQuery = query(
+      collection(this.firestore, 'loanDetails'),
+      where('userId', '==', userId)
+    );
+    const querySnapshot = await getDocs(loanDetailsQuery);
+    if (querySnapshot.empty) {
+      console.warn('No loan details found for the current user.');
+    }
+    querySnapshot.forEach(doc => {
+      const data = doc.data() as FireBaseDoc;
+      // Convert Firestore Timestamp to JS Date if needed
+      const loanDetails = { ...data.loanDetails,  startDate : data.loanDetails.startDate.toDate() };
+      this.loanDetailsService.loanDetails = loanDetails;
+      data.modifiedInstallments.forEach((installment: AmortizationInstallment, index: number) => {
+        this.loanDetailsService.clonedRows[installment.key] = {
+          key: installment.key,
+          emiAmount: installment.emiAmount,
+          partPaymentAmount: installment.partPaymentAmount,
+          interestRate: installment.interestRate
+        };
+      });
+      this.loanDetailsService.generateAmortisationReport();
+    });
+
+    console.log('User loan details loaded:', this.loanDetailsService.loanDetails);
+    console.log('Cloned rows:', this.loanDetailsService.clonedRows);
+  }
+
   getStoredUser(): User | null {
     return this.currentUser;
   }
@@ -38,18 +74,43 @@ export class FireBaseService {
       const record: AmortizationInstallment = {
         emiAmount: value.emiAmount,
         partPaymentAmount: value.partPaymentAmount,
-        interestRate: value.interestRate
+        interestRate: value.interestRate,
+        key: key
       };
       recordsToSave.push(record);
     });
 
-    const firebaseTransDomain: FirebaseTransDomain = {
-      loanDetails: this.loanDetailsService.loanDetails,
+    const firebaseTransDomain: FireBaseDoc = {
+      loanDetails: {...this.loanDetailsService.loanDetails, startDate: Timestamp.fromDate(this.loanDetailsService.loanDetails.startDate)},
       modifiedInstallments: recordsToSave,
       userId: userId || '',
       analysisId: userId || '',
     };
 
+    // Save to Firestore if record exists, otherwise add a new document with the userId
+
+    try {
+      const loanDetailsRef = collection(this.firestore, 'loanDetails');
+      const existingDocQuery = query(
+        loanDetailsRef,
+        where('userId', '==', userId)
+      );
+      const querySnapshot = await getDocs(existingDocQuery);
+
+      if (querySnapshot.empty) {
+        // No existing document, create a new one
+        await addDoc(loanDetailsRef, firebaseTransDomain);
+        console.log('New loan details document created for user:', userId);
+      } else {
+        // Update the existing document
+        const docId = querySnapshot.docs[0].id;
+        await updateDoc(doc(this.firestore, 'loanDetails', docId), { ...firebaseTransDomain })
+
+        console.log('Loan details updated for user:', userId);
+      }
+    } catch (error) {
+      console.error('Error saving changes to Firestore:', error);
+    }
 
 
   }
@@ -60,3 +121,4 @@ export class FireBaseService {
     console.log('event:', event);
   }
 }
+

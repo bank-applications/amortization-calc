@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { LoanDetails } from '../domain/loan-details-domain';
 import { MonthlyInstallment, YearlyInstallment } from '../domain/installment-domain';
+import { AmortizationInstallment } from '../domain/firebase-domain';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class LoanDetailsService {
   private previousInterestRate = 0;
 
 
-  clonedRows: { [s: string]: MonthlyInstallment } = {};
+  clonedRows: { [s: string]: AmortizationInstallment } = {};
 
   private _loanDetails: LoanDetails = {
     principal: 0,
@@ -56,13 +57,13 @@ export class LoanDetailsService {
       nextMonth.startingBalance = this.previousEndBalance;
 
       // set edited values of emi, roi and partPayment otherwise set prev values for emi and roi and set partpay as zero
-      let editedRecord: MonthlyInstallment | null = null;
+      let editedRecord: AmortizationInstallment | null = null;
       const key = this.formatDateKey(nextMonth.paymentDate);
       if (key !== '') {
         editedRecord = this.clonedRows[key];
       }
       if (editedRecord) {
-        const { emiAmount, interestRate, partPaymentAmount }: MonthlyInstallment = editedRecord;
+        const { emiAmount, interestRate, partPaymentAmount }: AmortizationInstallment = editedRecord;
         nextMonth.emiAmount = emiAmount;
         nextMonth.interestRate = interestRate;
         nextMonth.partPaymentAmount = partPaymentAmount;
@@ -255,14 +256,24 @@ export class LoanDetailsService {
   onRowEditInit(record: MonthlyInstallment) {
     const key = this.formatDateKey(record.paymentDate);
     if (key !== '') {
-      this.clonedRows[key] = { ...record };
+     this.clonedRows[key] = {
+        key: key,
+        emiAmount: record.emiAmount,
+        partPaymentAmount: record.partPaymentAmount,
+        interestRate: record.interestRate
+      };
     }
   }
 
   onRowEditSave(record: MonthlyInstallment) {
     const key = this.formatDateKey(record.paymentDate);
     if (key !== '') {
-      this.clonedRows[key] = record;
+      this.clonedRows[key] = {
+        key: key,
+        emiAmount: record.emiAmount,
+        partPaymentAmount: record.partPaymentAmount,
+        interestRate: record.interestRate
+      };
     }
     this.generateAmortisationReport();
     this.cleanClonedRows();

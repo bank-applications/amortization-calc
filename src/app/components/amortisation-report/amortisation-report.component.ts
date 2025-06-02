@@ -110,9 +110,13 @@ export class AmortisationReportComponent implements OnInit {
   onRowEditCancel(record: MonthlyInstallment, index: number, fyear: string) {
     const yearIndex = this.YearlyInstallmentList.findIndex(yData => yData.fy === fyear);
     if (yearIndex != -1) {
-      this.YearlyInstallmentList[yearIndex].fYearMonthlyData[index] = this.loanDetailsService.onRowEditCancel(record)?? record;
-    }
+      // Reset the record to its original state
+      const originalRecord = this.loanDetailsService.onRowEditCancel(record);
+      if( originalRecord) {
+        this.YearlyInstallmentList[yearIndex].fYearMonthlyData[index] = { ...record, ...originalRecord };
+      } 
   }
+}
 
   saveChanges(event: Event) {
     this.fireBaseServices.saveChanges(event, this.YearlyInstallmentList);
