@@ -45,9 +45,6 @@ export class AmortisationReportComponent implements OnInit {
     this.reportYearlyReportColumns = this.loanDetailsService.getYearlyReportColumns();
 
     this.loanDetailsService.amortisationReport$.subscribe((res: MonthlyInstallment[]) => {
-
-      console.log(res);
-
       //clear 
       this.YearlyInstallmentList = [];
 
@@ -111,7 +108,6 @@ export class AmortisationReportComponent implements OnInit {
   }
 
   onRowEditCancel(record: MonthlyInstallment, index: number, fyear: string) {
-    console.log('onRowEditCancel called', record, index);
     const yearIndex = this.YearlyInstallmentList.findIndex(yData => yData.fy === fyear);
     if (yearIndex != -1) {
       this.YearlyInstallmentList[yearIndex].fYearMonthlyData[index] = this.loanDetailsService.onRowEditCancel(record)?? record;

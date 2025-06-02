@@ -2,9 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Auth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from '@angular/fire/auth';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
-
-
+import { FireBaseService } from '../../services/fire-base.service';
 
 
 @Component({
@@ -15,11 +13,13 @@ import { FormsModule } from '@angular/forms';
   templateUrl: 'login.component.html',
   styleUrl: './login.component.css'
 })
+
+
 export class LoginComponent {
 
   private auth = inject(Auth);
   private router = inject(Router);
-
+  private firebaseService = inject(FireBaseService);
 
   email = '';
   password = '';
@@ -27,8 +27,9 @@ export class LoginComponent {
 
   loginWithEmail() {
     signInWithEmailAndPassword(this.auth, this.email, this.password)
-      .then(res => {
+      .then(async res => {
         this.status = `Logged in: ${res.user.email}`;
+         this.firebaseService.loadCurrentUser();
         this.router.navigate(['dashboard']); // 👈 navigate to dashboard
       })
       .catch(err => this.status = `Error: ${err.message}`);
@@ -37,9 +38,9 @@ export class LoginComponent {
   loginWithGoogle() {
     const provider = new GoogleAuthProvider();
     signInWithPopup(this.auth, provider)
-      .then(res => {
+      .then(async res => {
         this.status = `Google login success: ${res.user.email}`;
-
+        await this.firebaseService.loadCurrentUser();
         this.router.navigate(['dashboard']); // 👈 navigate to dashboard
 
       })

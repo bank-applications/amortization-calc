@@ -260,7 +260,6 @@ export class LoanDetailsService {
   }
 
   onRowEditSave(record: MonthlyInstallment) {
-    console.log('onRowEditSave called', record);
     const key = this.formatDateKey(record.paymentDate);
     if (key !== '') {
       this.clonedRows[key] = record;

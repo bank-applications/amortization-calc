@@ -2,6 +2,7 @@ export const environment = {
     firebase: {
         apiKey: "AIzaSyAbH7spJRZjzjZgQkRubNj_ecr28-QDNJE",
         authDomain: "amartization-calc-ang.firebaseapp.com",
+       // databaseURL: "https://amartization-calc-ang-default-rtdb.firebaseio.com",
         projectId: "amartization-calc-ang",
         storageBucket: "amartization-calc-ang.firebasestorage.app",
         messagingSenderId: "424004011562",
