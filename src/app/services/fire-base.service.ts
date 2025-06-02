@@ -63,7 +63,7 @@ export class FireBaseService {
     return this.currentUser;
   }
 
-  async saveChanges(event: Event, yearlyInstallmentList: any[]): Promise<void> {
+  async saveChanges(): Promise<void> {
     const userId = this.getStoredUser()?.uid;
     const recordsToSave: AmortizationInstallment[] = [];
     Object.entries(this.loanDetailsService.clonedRows).forEach(([key, value]) => {
@@ -109,7 +109,7 @@ export class FireBaseService {
 
   }
 
-  exportCSV(event: Event, yearlyInstallmentList: any[]): void {
+  exportCSV(): void {
     // Implement your logic to export data as CSV, e.g., using a library or custom logic
     
   }

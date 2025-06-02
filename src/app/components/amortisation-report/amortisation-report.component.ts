@@ -1,6 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { LoanDetailsService } from "../../services/loan-details.service";
 import { TableModule, TableRowCollapseEvent, TableRowExpandEvent } from "primeng/table";
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { CommonModule } from '@angular/common';
+
+
 import { Button } from "primeng/button";
 import { Ripple } from "primeng/ripple";
 import { FormsModule } from "@angular/forms";
@@ -15,14 +21,18 @@ import { FireBaseService } from '../../services/fire-base.service';
 @Component({
   selector: 'amort-amortisation-report',
   imports: [
+    CommonModule,
     TableModule,
     Button,
     Ripple,
     FormsModule,
     DatePipe,
     Card,
-    ToolbarModule
+    ToolbarModule,
+    ConfirmDialogModule,
+    ToastModule
   ],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './amortisation-report.component.html',
   styleUrl: './amortisation-report.component.css'
 })
@@ -39,6 +49,9 @@ export class AmortisationReportComponent implements OnInit {
   protected readonly tableStyles = tableStyles;
   protected readonly cardStyles = cardStyles;
   customTableStyles = { 'min-width': '60rem', 'border': '1px solid #ffffff29', 'border-radius': '1px' };
+
+  constructor(private confirmationService: ConfirmationService, private messageService: MessageService) { }
+
 
   ngOnInit(): void {
     this.reportMonthlyReportColumns = this.loanDetailsService.getMonthlyReportColumns();
@@ -112,18 +125,44 @@ export class AmortisationReportComponent implements OnInit {
     if (yearIndex != -1) {
       // Reset the record to its original state
       const originalRecord = this.loanDetailsService.onRowEditCancel(record);
-      if( originalRecord) {
+      if (originalRecord) {
         this.YearlyInstallmentList[yearIndex].fYearMonthlyData[index] = { ...record, ...originalRecord };
-      } 
+      }
+    }
   }
-}
 
   saveChanges(event: Event) {
-    this.fireBaseServices.saveChanges(event, this.YearlyInstallmentList);
+
   }
 
   exportCSV(event: Event) {
-    this.fireBaseServices.exportCSV(event, this.YearlyInstallmentList);
+    this.fireBaseServices.exportCSV();
+  }
+
+  confirm() {
+    this.confirmationService.confirm({
+      header: 'Save Changes Confirmation',
+      message: 'Are you sure you want to save the changes? Previous data may be overwritten.',
+      icon: 'pi pi-exclamation-triangle',
+      rejectButtonProps: {
+        label: 'No',
+        icon: 'pi pi-times',
+        outlined: true,
+        size: 'small'
+      },
+      acceptButtonProps: {
+        label: 'Yes, Save',
+        icon: 'pi pi-check',
+        size: 'small'
+      },
+      accept: () => {
+        this.fireBaseServices.saveChanges();
+        this.messageService.add({ severity: 'success', summary: 'Changes Saved', detail: 'Your changes have been saved successfully.', life: 3000 });
+      },
+      reject: () => {
+        this.messageService.add({ severity: 'info', summary: 'Cancelled', detail: 'Save operation was cancelled.', life: 3000 });
+      }
+    });
   }
 
 }
