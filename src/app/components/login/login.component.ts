@@ -29,7 +29,6 @@ export class LoginComponent {
     onAuthStateChanged(this.auth, async (user: User | null) => {
       if (user) {
         // User is signed in (could be SSO auto-login)
-        console.log('User is signed in:', user);
         this.status = `Auto-login: ${user.email}`;
         await this.firebaseService.loadCurrentUser();
         await this.firebaseService.loadUserLoanDetails();

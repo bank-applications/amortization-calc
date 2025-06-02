@@ -29,7 +29,6 @@ export class FireBaseService {
 
   async loadUserLoanDetails(): Promise<void> {
     // get the current user
-    console.log('Loading user loan details...');
     const userId = this.getStoredUser()?.uid;
     if (!userId) {
       console.error('No user is currently logged in.');
@@ -58,9 +57,6 @@ export class FireBaseService {
       });
       this.loanDetailsService.generateAmortisationReport();
     });
-
-    console.log('User loan details loaded:', this.loanDetailsService.loanDetails);
-    console.log('Cloned rows:', this.loanDetailsService.clonedRows);
   }
 
   getStoredUser(): User | null {
@@ -100,13 +96,11 @@ export class FireBaseService {
       if (querySnapshot.empty) {
         // No existing document, create a new one
         await addDoc(loanDetailsRef, firebaseTransDomain);
-        console.log('New loan details document created for user:', userId);
       } else {
         // Update the existing document
         const docId = querySnapshot.docs[0].id;
         await updateDoc(doc(this.firestore, 'loanDetails', docId), { ...firebaseTransDomain })
 
-        console.log('Loan details updated for user:', userId);
       }
     } catch (error) {
       console.error('Error saving changes to Firestore:', error);
@@ -117,8 +111,7 @@ export class FireBaseService {
 
   exportCSV(event: Event, yearlyInstallmentList: any[]): void {
     // Implement your logic to export data as CSV, e.g., using a library or custom logic
-    console.log('Exporting to CSV:', yearlyInstallmentList);
-    console.log('event:', event);
+    
   }
 }
 
