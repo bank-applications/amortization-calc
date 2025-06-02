@@ -45,7 +45,7 @@
             }
             @else if (column.field === 'interestPaid' || column.field === 'principalPaid' || column.field ===
             'startingBalance' || column.field === 'endingBalance' ) {
-            <span> {{ record[column.field].toFixed()}} </span>
+            <span> {{ record[column.field]?.toFixed()}} </span>
             }
             @else if (column.field === 'interestRate' ) {
             <span> {{ record[column.field]?.toFixed(2)}} </span>
