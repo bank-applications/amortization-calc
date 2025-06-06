@@ -15,6 +15,7 @@ import { DatePipe, NgForOf, NgIf } from "@angular/common";
 import { cardStyles, tableStyles } from "./amortisation-report-table.styles";
 import { Card } from "primeng/card";
 import { ToolbarModule } from "primeng/toolbar";
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MonthlyInstallment, YearlyInstallment } from '../../domain/installment-domain';
 import { FireBaseService } from '../../services/fire-base.service';
 
@@ -30,7 +31,8 @@ import { FireBaseService } from '../../services/fire-base.service';
     Card,
     ToolbarModule,
     ConfirmDialogModule,
-    ToastModule
+    ToastModule,
+    ProgressSpinnerModule
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './amortisation-report.component.html',
@@ -38,7 +40,7 @@ import { FireBaseService } from '../../services/fire-base.service';
 })
 export class AmortisationReportComponent implements OnInit {
   YearlyInstallmentList: YearlyInstallment[] = [];
-
+  loading = false;
 
   reportMonthlyReportColumns: Column[] = [];
   reportYearlyReportColumns: Column[] = [];
@@ -58,7 +60,8 @@ export class AmortisationReportComponent implements OnInit {
     this.reportYearlyReportColumns = this.loanDetailsService.getYearlyReportColumns();
 
     this.loanDetailsService.amortisationReport$.subscribe((res: MonthlyInstallment[]) => {
-      //clear 
+      this.loading = true;
+      //clear
       this.YearlyInstallmentList = [];
 
       // segregate the montly installements by year
@@ -94,7 +97,7 @@ export class AmortisationReportComponent implements OnInit {
         }
         yearlyData.fYearMonthlyData.push(monthData);
       });
-
+      this.loading = false;
     });
   }
 

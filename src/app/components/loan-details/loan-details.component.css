@@ -1,5 +1,372 @@
+.loan-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  background: #f8f9fa;
+}
+
+.loan-details-header {
+  background: linear-gradient(135deg, var(--p-primary-50) 0%, var(--p-primary-100) 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--p-primary-200);
+}
+
+.loan-form-card {
+  background: white !important;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card-header-content {
+  background: linear-gradient(135deg, #198754 0%, #157347 100%) !important;
+  color: white;
+  border-radius: 0.375rem 0.375rem 0 0;
+  margin: -1px -1px 0 -1px;
+}
+
 .loan-details-form {
-  padding: 3%;
+  background: white;
+  padding: 2rem;
+}
+
+.form-field {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: var(--p-text-color);
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.form-help {
+  color: var(--p-text-muted-color);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.p-error {
+  color: var(--p-red-500);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.advanced-options {
+  margin: 2rem 0;
+}
+
+.form-actions {
+  margin-top: 2rem;
+  padding-top: 1rem;
+}
+
+.calculate-btn {
+  background: linear-gradient(135deg, #198754 0%, #157347 100%) !important;
+  border: none !important;
+  color: white !important;
+}
+
+.calculate-btn:hover {
+  background: linear-gradient(135deg, #157347 0%, #146c43 100%) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.summary-card {
+  background: white !important;
+  border: 1px solid #d1e7dd;
+}
+
+  .summary-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.summary-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.summary-icon {
+  font-size: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--p-surface-50);
+}
+
+.summary-label {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--p-text-muted-color);
+  font-weight: 500;
+}
+
+.summary-value {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* PrimeNG Component Overrides */
+::ng-deep .p-inputnumber-input {
+  border-radius: 0.375rem;
+  border: 1px solid var(--p-surface-border);
+  padding: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+::ng-deep .p-inputnumber-input:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+::ng-deep .p-datepicker-input {
+  border-radius: 0.375rem;
+  border: 1px solid var(--p-surface-border);
+  padding: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+::ng-deep .p-datepicker-input:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+::ng-deep .p-dropdown {
+  border-radius: 0.375rem;
+  border: 1px solid var(--p-surface-border);
+  transition: all 0.3s ease;
+}
+
+::ng-deep .p-dropdown:focus-within {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+::ng-deep .p-button {
+  border-radius: 0.375rem;
+  transition: all 0.3s ease;
+}
+
+::ng-deep .p-button:hover {
+  transform: translateY(-1px);
+}
+
+/* Override any PrimeNG blue defaults */
+::ng-deep .p-card {
+  background: white !important;
+}
+
+::ng-deep .p-card .p-card-header {
+  background: white !important;
+  color: #198754 !important;
+  border-bottom: 1px solid #dee2e6;
+}
+
+::ng-deep .p-inputnumber-input:focus,
+::ng-deep .p-datepicker-input:focus,
+::ng-deep .p-dropdown:focus-within {
+  border-color: #198754 !important;
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25) !important;
+}
+
+::ng-deep .p-button {
+  border-radius: 0.375rem;
+  transition: all 0.3s ease;
+}
+
+::ng-deep .p-button:hover {
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .loan-details-container {
+    padding: 0.5rem;
+  }
+  
+  .loan-details-header {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .loan-details-form {
+    padding: 1rem;
+  }
+  
+  .form-actions .flex {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .summary-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+}
+
+/* Utility Classes */
+.flex {
+  display: flex;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.text-900 {
+  color: var(--p-surface-900);
+}
+
+.text-600 {
+  color: var(--p-surface-600);
+}
+
+.text-primary {
+  color: var(--p-primary-500);
+}
+
+.text-green-600 {
+  color: var(--p-green-600);
+}
+
+.text-orange-600 {
+  color: var(--p-orange-600);
+}
+
+.text-purple-600 {
+  color: var(--p-purple-600);
+}
+
+.text-white {
+  color: white;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.border-circle {
+  border-radius: 50%;
+}
+
+.bg-primary {
+  background-color: var(--p-primary-500);
+}
+
+.w-3rem {
+  width: 3rem;
+}
+
+.h-3rem {
+  height: 3rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1rem;
+}
+
+.col-12 {
+  grid-column: span 12;
+}
+
+@media (min-width: 768px) {
+  .md\:col-6 {
+    grid-column: span 6;
+  }
+  
+  .md\:col-4 {
+    grid-column: span 4;
+  }
+  
+  .md\:col-3 {
+    grid-column: span 3;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:col-3 {
+    grid-column: span 3;
+  }
+}
+
+.loan-details-form {
+  padding: 2rem;
 }
 
 .form-element-label {
@@ -19,4 +386,27 @@
 :host ::ng-deep .custom-date-picker .p-datepicker .p-datepicker-input {
   background-color: #FFFFFF29;
   color: white;
+}
+
+.header-btn {
+  color: white !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.header-btn:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.calculate-btn {
+  background: linear-gradient(135deg, #198754 0%, #157347 100%) !important;
+  border: none !important;
+  color: white !important;
+}
+
+.calculate-btn:hover {
+  background: linear-gradient(135deg, #157347 0%, #146c43 100%) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }

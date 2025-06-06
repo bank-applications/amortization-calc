@@ -1,4 +1,148 @@
-<div class="container-fluid">
-  <div class="loan-details-section"><amort-loan-details></amort-loan-details></div>
-  <ng-container><amort-amortisation-report></amort-amortisation-report></ng-container>
+<div class="d-flex vh-100 bg-white">
+  <!-- Mobile Header -->
+  <div class="d-md-none position-fixed top-0 start-0 end-0 bg-success shadow-sm" style="z-index: 1000;">
+    <div class="d-flex align-items-center justify-content-between p-3">
+      <button pButton pRipple icon="pi pi-bars" class="p-button-text text-white"
+        (click)="toggleDrawer()">
+      </button>
+      <div class="d-flex align-items-center">
+        <i class="pi pi-calculator me-2 text-white fs-4"></i>
+        <span class="fw-bold text-white">LoanCalc Pro</span>
+      </div>
+      <div style="width: 3rem;"></div>
+    </div>
+  </div>
+
+  <!-- Sidebar Drawer -->
+  <p-drawer [(visible)]="drawerOpen" position="left" [modal]="true" [dismissible]="true" styleClass="custom-drawer">
+    <ng-template pTemplate="header">
+      <div class="d-flex align-items-center w-100 bg-white">
+        <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" 
+             style="width: 3rem; height: 3rem;">
+          <i class="pi pi-calculator text-white"></i>
+        </div>
+        <div>
+          <h5 class="mb-0 text-success fw-bold">LoanCalc Pro</h5>
+          <small class="text-muted">Financial Calculator</small>
+        </div>
+      </div>
+    </ng-template>
+
+    <div class="h-100 d-flex flex-column bg-white">
+      <!-- User Profile Section -->
+      <div class="p-3 mb-3 bg-success bg-opacity-10 rounded mx-3">
+        <div class="d-flex align-items-center">
+          <p-avatar label="JD" styleClass="bg-success text-white me-3" size="large"></p-avatar>
+          <div class="flex-grow-1">
+            <p class="mb-0 fw-semibold text-dark">John Doe</p>
+            <small class="text-muted">Premium Member</small>
+          </div>
+          <p-badge value="Pro" severity="success"></p-badge>
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <div class="flex-grow-1 px-2">
+        <p-menu [model]="menuItems" styleClass="w-100 border-0 bg-white"></p-menu>
+      </div>
+
+      <!-- User Menu -->
+      <div class="p-3 border-top bg-white">
+        <p-menu [model]="userMenuItems" styleClass="w-100 border-0 bg-white"></p-menu>
+      </div>
+    </div>
+  </p-drawer>
+
+  <!-- Desktop Sidebar -->
+  <div class="d-none d-md-block bg-white border-end shadow-sm" style="width: 280px;">
+    <div class="position-fixed bg-white border-end overflow-auto shadow-sm" style="width: 280px; height: 100vh;">
+      <!-- Logo Section -->
+      <div class="p-4 border-bottom bg-white">
+        <div class="d-flex align-items-center">
+          <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" 
+               style="width: 3rem; height: 3rem;">
+            <i class="pi pi-calculator text-white"></i>
+          </div>
+          <div>
+            <h5 class="mb-0 text-success fw-bold">LoanCalc Pro</h5>
+            <small class="text-muted">Financial Calculator</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Profile -->
+      <div class="p-3 bg-success bg-opacity-10">
+        <div class="d-flex align-items-center">
+          <p-avatar label="JD" styleClass="bg-success text-white me-3" size="large"></p-avatar>
+          <div class="flex-grow-1">
+            <p class="mb-0 fw-semibold text-dark">John Doe</p>
+            <small class="text-muted">Premium Member</small>
+          </div>
+          <p-badge value="Pro" severity="success"></p-badge>
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <div class="p-2 flex-grow-1 bg-white">
+        <p-menu [model]="menuItems" styleClass="w-100 border-0 bg-white"></p-menu>
+      </div>
+
+      <!-- User Menu -->
+      <div class="p-3 border-top mt-auto bg-white">
+        <p-menu [model]="userMenuItems" styleClass="w-100 border-0 bg-white"></p-menu>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="flex-grow-1 bg-light">
+    <div class="h-100 overflow-auto">
+      <div class="content-body bg-light" [ngClass]="{'pt-5': true, 'pt-md-0': true}">
+        @if (activeView === 'emi-calculator') {
+          <amort-loan-details (onCalculate)="closeDrawer()"></amort-loan-details>
+        } @else if (activeView === 'amortization') {
+          <amort-amortisation-report></amort-amortisation-report>
+        } @else if (activeView === 'reports') {
+          <div class="p-4 bg-light">
+            <div class="container-fluid" style="max-width: 800px;">
+              <p-card header="Reports" styleClass="border-0 shadow-sm">
+              <div class="text-center p-4">
+                  <i class="pi pi-file-pdf text-success display-1 mb-3"></i>
+                  <h3 class="mb-3 text-dark">Reports</h3>
+                  <p class="text-muted">Generate and view detailed loan reports.</p>
+                  <button pButton pRipple label="Generate Report" icon="pi pi-file-pdf" 
+                    class="p-button-success mt-3">
+                </button>
+    </div>
+            </p-card>
+</div>
+      </div>
+        } @else if (activeView === 'analyzers') {
+          <div class="p-4 bg-light">
+            <div class="container-fluid" style="max-width: 800px;">
+              <p-card header="Loan Analyzers" styleClass="border-0 shadow-sm">
+                <div class="text-center p-4">
+                  <i class="pi pi-chart-line text-success display-1 mb-3"></i>
+                  <h3 class="mb-3 text-dark">Analyzers</h3>
+                  <p class="text-muted">Analyze loan scenarios and compare different options.</p>
+                  <div class="row mt-4">
+                    <div class="col-12 col-md-6 mb-2">
+                      <button pButton pRipple label="Loan Comparison" icon="pi pi-chart-bar" 
+                        class="p-button-outlined p-button-success w-100">
+                    </button>
+    </div>
+                    <div class="col-12 col-md-6 mb-2">
+                      <button pButton pRipple label="Payment Analysis" icon="pi pi-chart-pie" 
+                        class="p-button-outlined p-button-success w-100">
+                      </button>
+  </div>
+</div>
+                </div>
+              </p-card>
+      </div>
+    </div>
+        }
+  </div>
+</div>
+  </div>
 </div>

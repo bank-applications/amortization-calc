@@ -9,3 +9,38 @@
 :host ::ng-deep .expansion-toggle .p-button .pi:hover {
   color: var(--primary-button-color);
 }
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.amortisation-report-section {
+  padding: 1rem;
+}
+
+::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-width: 0 0 1px 0;
+  font-weight: 600;
+  padding: 1rem;
+  color: #495057;
+}
+
+::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  border: 1px solid #dee2e6;
+  border-width: 0 0 1px 0;
+  padding: 1rem;
+  color: #495057;
+}
+
+::ng-deep .p-datatable .p-datatable-tbody > tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
+  background-color: #e9ecef;
+}

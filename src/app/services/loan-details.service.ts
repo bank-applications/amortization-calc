@@ -35,6 +35,10 @@ export class LoanDetailsService {
     //this.generateAmortisationReport();
   }
 
+  hasLoanDetails(): boolean {
+    return this._loanDetails.principal > 0;
+  }
+
   generateAmortisationReport(): void {
     // clear local var
     this.clear();

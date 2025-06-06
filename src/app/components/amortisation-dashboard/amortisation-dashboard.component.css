@@ -1,3 +1,414 @@
-.loan-details-section {
-  margin: 4rem;
+.layout-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.mobile-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.desktop-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.sidebar-container {
+  position: fixed;
+  width: 280px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 0;
+}
+
+.content-wrapper {
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.content-body {
+  padding: 0;
+  height: 100%;
+}
+
+.navigation-section {
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    margin-left: 280px;
+  }
+}
+
+@media (max-width: 767px) {
+  .main-content {
+    margin-top: 60px;
+  }
+
+  .content-body {
+    padding: 1rem;
+  }
+}
+
+/* Custom Menu Styles */
+::ng-deep .custom-menu {
+  background: transparent !important;
+}
+
+::ng-deep .custom-menu .p-menuitem-link {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+::ng-deep .custom-menu .p-menuitem-link:hover {
+  background-color: var(--p-primary-50) !important;
+  color: var(--p-primary-600) !important;
+  transform: translateX(4px);
+}
+
+::ng-deep .custom-menu .p-menuitem-link.router-link-active {
+  background-color: var(--p-primary-100) !important;
+  color: var(--p-primary-700) !important;
+  font-weight: 600;
+  border-left: 4px solid var(--p-primary-500);
+}
+
+::ng-deep .custom-menu .p-menuitem-icon {
+  margin-right: 0.75rem;
+  font-size: 1.2rem;
+}
+
+::ng-deep .custom-menu .p-menuitem-text {
+  font-size: 0.95rem;
+}
+
+/* Custom Drawer Styles */
+::ng-deep .custom-drawer {
+  width: 280px !important;
+  z-index: 1100 !important;
+}
+
+::ng-deep .custom-drawer .p-drawer-content {
+  padding: 0 !important;
+  background: white !important;
+}
+
+::ng-deep .custom-drawer .p-drawer-header {
+  background: white !important;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+::ng-deep .custom-drawer {
+    width: 260px !important;
+}
+
+  .desktop-sidebar {
+    width: 260px;
+}
+
+  .sidebar-container {
+    width: 260px;
+  }
+
+  @media (min-width: 768px) {
+    .main-content {
+      margin-left: 260px;
+    }
+  }
+}
+/* Placeholder sections styling */
+.reports-placeholder,
+.analyzers-placeholder {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Smooth transitions */
+.sidebar-content > div {
+  transition: all 0.3s ease;
+}
+
+/* Custom scrollbar for sidebar */
+.sidebar-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.sidebar-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
+  }
+
+.sidebar-container::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Utility Classes */
+.flex {
+  display: flex;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.p-2 {
+  padding: 0.5rem;
+}
+
+.p-3 {
+  padding: 0.75rem;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.h-screen {
+  height: 100vh;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+}
+
+.text-6xl {
+  font-size: 3.75rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.border-round {
+  border-radius: 6px;
+}
+
+.border-circle {
+  border-radius: 50%;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .md\:block {
+    display: block;
+  }
+  
+  .md\:hidden {
+    display: none;
+  }
+  
+  .md\:col-6 {
+    grid-column: span 6;
+  }
+}
+
+/* Color utilities */
+.bg-primary {
+  background-color: var(--p-primary-500);
+}
+
+.bg-primary-50 {
+  background-color: var(--p-primary-50);
+}
+
+.bg-white {
+  background-color: white;
+}
+
+.text-white {
+  color: white;
+}
+
+.text-primary {
+  color: var(--p-primary-500);
+}
+
+.text-600 {
+  color: var(--p-surface-600);
+}
+
+.text-900 {
+  color: var(--p-surface-900);
+}
+
+.border-top-1 {
+  border-top: 1px solid var(--p-surface-border);
+}
+
+.border-bottom-1 {
+  border-bottom: 1px solid var(--p-surface-border);
+}
+
+.border-right-1 {
+  border-right: 1px solid var(--p-surface-border);
+}
+
+.shadow-3 {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.w-3rem {
+  width: 3rem;
+}
+
+.h-3rem {
+  height: 3rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1rem;
+}
+
+.col-12 {
+  grid-column: span 12;
+}
+
+/* Minimal custom CSS - using Bootstrap and PrimeNG classes */
+
+/* Custom drawer width */
+::ng-deep .custom-drawer {
+  width: 280px !important;
+}
+
+::ng-deep .custom-drawer .p-drawer-content {
+  padding: 0 !important;
+  background: white !important;
+}
+
+::ng-deep .custom-drawer .p-drawer-header {
+  background: white !important;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Green theme menu styling */
+::ng-deep .p-menu .p-menuitem-link {
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  margin-bottom: 0.25rem;
+  transition: all 0.2s;
+  background: white !important;
+}
+
+::ng-deep .p-menu .p-menuitem-link:hover {
+  background-color: rgba(25, 135, 84, 0.1) !important;
+  color: #198754 !important;
+  transform: translateX(2px);
+}
+
+::ng-deep .p-menu .p-menuitem-icon {
+  margin-right: 0.75rem;
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+  .content-body {
+    padding-top: 4rem !important;
+  }
+}
+
+/* Ensure no blue backgrounds anywhere */
+.layout-wrapper,
+.content-body,
+.main-content {
+  background: #f8f9fa !important;
+}
+
+.active-menu-item {
+  background-color: rgba(25, 135, 84, 0.1) !important;
+  color: #198754 !important;
+  font-weight: 600;
+  border-left: 4px solid #198754;
 }

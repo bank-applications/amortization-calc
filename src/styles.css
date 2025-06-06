@@ -2,6 +2,7 @@
 @import "primeicons/primeicons.css";
 
 :root {
+  --primary-color: #198754;
   --bg-primary-from: var(--p-blue-800);
   --bg-primary-to: var(--p-blue-500);
   --primary-font-color: #FFFFFF;

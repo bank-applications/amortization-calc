@@ -1,36 +1,158 @@
-<p-card header="Loan Details" [dt]="loanDetailsCardStyles">
-  <form [formGroup]="loanForm" class="loan-details-form" >
-    <div class="row">
-      <div class="col">
-        <p-floatlabel>
-          <input id="principal" pInputText placeholder="" [dt]="formElementStyles" formControlName="principal" />
-          <label for="principal" class="form-element-label">Principal Amount</label>
-        </p-floatlabel>
-      </div>
-      <div class="col">
-        <p-floatlabel>
-          <input id="roi" pInputText placeholder="" [dt]="formElementStyles" formControlName="roi" />
-          <label for="roi" class="form-element-label">Interest Rate</label>
-        </p-floatlabel>
-      </div>
-      <div class="col">
-        <p-floatlabel>
-          <input id="tenure" pInputText placeholder="" [dt]="formElementStyles" formControlName="tenure" />
-          <label for="tenure" class="form-element-label">Tenure</label>
-        </p-floatlabel>
-      </div>
-      <div class="col date-picker-element">
-        <label class="form-element-label loan-start-date">Start Date</label>
-        <p-datepicker class="custom-date-picker" formControlName="startDate" [dt]="startDateStyles"></p-datepicker>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-5"></div>
-      <div class="col-2 flex justify-content-center">
-        <p-button class="custom-icon-button" label="Submit" [raised]="true" [dt]="submitButtonStyles" (onClick)="onSubmitDetails()"/>
-      </div>
-      <div class="col-5"></div>
-    </div>
+<div class="container-fluid p-4">
+  <div class="row" [class.justify-content-center]="!loanDetailsService.hasLoanDetails()">
+    <div [ngClass]="loanDetailsService.hasLoanDetails() ? 'col-lg-4' : 'col-lg-5'">
+      <p-card styleClass="loan-form-card">
+        <ng-template pTemplate="header">
+          <div class="card-header-content p-4">
+            <div class="flex align-items-center justify-content-between w-full">
+              <div class="flex align-items-center gap-3">
+                <div
+                  class="bg-white bg-opacity-20 border-circle w-3rem h-3rem flex align-items-center justify-content-center">
+                  <i class="pi pi-calculator text-white text-xl"></i>
+                </div>
+                <div>
+                  <h4 class="m-0 text-white font-bold">Loan Information</h4>
+                  <p class="m-0 text-sm text-white opacity-90">Enter your loan details below</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
 
-  </form>
-</p-card>
+        <form [formGroup]="loanForm" class="loan-details-form">
+          <!-- Form Grid -->
+          <div class="grid">
+            <!-- Principal Amount -->
+            <div class="col-12 md:col-6">
+              <div class="form-field">
+                <label for="principal" class="form-label">
+                  Principal Amount
+                </label>
+                <p-inputnumber id="principal" formControlName="principal" mode="currency" currency="INR" locale="en-IN"
+                  placeholder="&#x20B9; Enter loan amount" styleClass="w-full"
+                  [style]="{'font-family': 'Font Awesome 5 Free', 'sans-serif': ''}">
+                </p-inputnumber>
+                <small class="form-help">Minimum: $1,000</small>
+                @if (loanForm.get('principal')?.invalid && loanForm.get('principal')?.touched) {
+                <small class="p-error">Principal amount is required and must be at least $1,000</small>
+                }
+              </div>
+            </div>
+
+            <!-- Interest Rate -->
+            <div class="col-12 md:col-6">
+              <div class="form-field">
+                <label for="roi" class="form-label">
+                  Annual Interest Rate
+                </label>
+                <p-inputnumber id="roi" formControlName="roi" mode="decimal" suffix="%"
+                  placeholder="&#xf295; Enter interest rate" styleClass="w-full"
+                  [style]="{'font-family': 'Font Awesome 5 Free', 'sans-serif': ''}">
+                </p-inputnumber>
+                <small class="form-help">Range: 0.1% - 30%</small>
+                @if (loanForm.get('roi')?.invalid && loanForm.get('roi')?.touched) {
+                <small class="p-error">Interest rate is required (0.1% - 30%)</small>
+                }
+              </div>
+            </div>
+
+            <!-- Tenure -->
+            <div class="col-12 md:col-6">
+              <div class="form-field">
+                <label for="tenure" class="form-label">
+                  Loan Tenure
+                </label>
+                <p-inputnumber id="tenure" formControlName="tenure" suffix=" years" placeholder="&#xf073; Enter tenure"
+                  styleClass="w-full" [style]="{'font-family': 'Font Awesome 5 Free', 'sans-serif': ''}">
+                </p-inputnumber>
+                <small class="form-help">Range: 1 - 50 years</small>
+                @if (loanForm.get('tenure')?.invalid && loanForm.get('tenure')?.touched) {
+                <small class="p-error">Tenure is required (1 - 50 years)</small>
+                }
+              </div>
+            </div>
+
+            <!-- Start Date -->
+            <div class="col-12 md:col-6">
+              <div class="form-field">
+                <label for="startDate" class="form-label">
+                  Loan Start Date
+                </label>
+                <p-datepicker id="startDate" formControlName="startDate" [showIcon]="true" iconDisplay="input"
+                  placeholder="&#xf073; Select start date" dateFormat="mm/dd/yy" styleClass="w-full"
+                  [style]="{'font-family': 'Font Awesome 5 Free', 'sans-serif': ''}">
+                </p-datepicker>
+                <small class="form-help">When the loan starts</small>
+                @if (loanForm.get('startDate')?.invalid && loanForm.get('startDate')?.touched) {
+                <small class="p-error">Start date is required</small>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <p-divider></p-divider>
+
+          <div class="form-actions">
+            <div class="flex justify-content-center gap-3">
+              <button type="submit" pButton pRipple label="Calculate" icon="pi pi-calculator"
+                class="p-button-lg calculate-btn" [disabled]="loanForm.invalid" (click)="onSubmitDetails()">
+              </button>
+            </div>
+          </div>
+        </form>
+      </p-card>
+
+      <!-- Quick Calculation Summary -->
+      @if (quickSummary) {
+      <p-card header="Quick Summary" styleClass="mt-4 summary-card">
+        <div class="grid">
+          <div class="col-12 md:col-3">
+            <div class="summary-item">
+              <i class="pi pi-dollar summary-icon text-primary"></i>
+              <div>
+                <p class="summary-label">Monthly Payment</p>
+                <p class="summary-value text-primary">{{ quickSummary.monthlyPayment | currency:'INR' }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 md:col-3">
+            <div class="summary-item">
+              <i class="pi pi-chart-line summary-icon text-green-600"></i>
+              <div>
+                <p class="summary-label">Total Interest</p>
+                <p class="summary-value text-green-600">{{ quickSummary.totalInterest | currency:'INR' }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 md:col-3">
+            <div class="summary-item">
+              <i class="pi pi-calculator summary-icon text-orange-600"></i>
+              <div>
+                <p class="summary-label">Total Amount</p>
+                <p class="summary-value text-orange-600">{{ quickSummary.totalAmount | currency:'INR' }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 md:col-3">
+            <div class="summary-item">
+              <i class="pi pi-calendar summary-icon text-purple-600"></i>
+              <div>
+                <p class="summary-label">Total Payments</p>
+                <p class="summary-value text-purple-600">{{ quickSummary.totalPayments }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-card>
+      }
+    </div>
+    @if (loanDetailsService.hasLoanDetails()) {
+    <div [ngClass]="loanDetailsService.hasLoanDetails() ? 'col-lg-8' : 'col-lg-7'">
+      <p-card header="Amortization Schedule" styleClass="h-100">
+        <amort-amortisation-report></amort-amortisation-report>
+      </p-card>
+    </div>
+    }
+  </div>
+</div>
