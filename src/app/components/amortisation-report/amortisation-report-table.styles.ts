@@ -35,10 +35,9 @@ export const tableStyles = {
     }
   }
 }
-
 export const cardStyles = {
   root: {
-    background: `${WHITE_COLOR}29`,
+    background: '#222B45', // A dark blue/gray card background for contrast
     color: WHITE_COLOR
   }
 }

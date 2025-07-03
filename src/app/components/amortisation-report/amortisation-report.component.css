@@ -2,10 +2,56 @@
   min-height: 80vh;
 }
 
+/* Expansion toggle icon */
 :host ::ng-deep .expansion-toggle .p-button .pi {
-  color: #FFFFFF;
+  color: #fff;
+}
+:host ::ng-deep .expansion-toggle .p-button .pi:hover {
+  color: var(--primary-button-color, #2196f3);
 }
 
-:host ::ng-deep .expansion-toggle .p-button .pi:hover {
-  color: var(--primary-button-color);
+/* Gradients */
+.bg-gradient-blue,
+.blue-table thead tr,
+.blue-table .bg-gradient-blue {
+  background: linear-gradient(90deg, #1976d2 0%, #2196f3 100%) !important;
+  color: #fff !important;
+}
+.bg-gradient-blue-light,
+.blue-table .bg-gradient-blue-light {
+  background: linear-gradient(90deg, #e3f2fd 0%, #bbdefb 100%) !important;
+}
+
+/* Table styling */
+.blue-table th,
+.blue-table td {
+  vertical-align: middle !important;
+  border-bottom: 1px solid #e3eaf3 !important;
+}
+.blue-table th,
+.bg-gradient-blue th,
+.bg-gradient-blue {
+  color: #fff !important;
+}
+.blue-table tbody tr {
+  background: #fff !important;
+  transition: background 0.2s;
+}
+.blue-table tbody tr:nth-child(even) {
+  background: #f5faff !important;
+}
+.blue-table tbody tr:hover {
+  background: #e3f2fd !important;
+}
+
+/* Badges and highlights */
+.blue-table .badge.bg-primary {
+  background-color: #1976d2 !important;
+}
+.blue-table .badge.bg-info {
+  background-color: #90caf9 !important;
+  color: #0d47a1 !important;
+}
+.blue-table .fw-bold.text-primary {
+  color: #1976d2 !important;
 }
