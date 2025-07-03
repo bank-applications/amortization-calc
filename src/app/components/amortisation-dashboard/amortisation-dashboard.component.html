@@ -1,4 +1,86 @@
-<div class="container-fluid">
-  <div class="loan-details-section"><amort-loan-details></amort-loan-details></div>
-  <ng-container><amort-amortisation-report></amort-amortisation-report></ng-container>
+<div class="container-fluid mt-4">
+  <div class="row mb-4">
+    <!-- Loan Details Card -->
+    <div class="col-md-4">
+      <div class="card shadow border-primary border-2">
+        <div class="card-body">
+          <h5 class="card-title text-primary"><i class="pi pi-info-circle"></i> Loan Details</h5>
+          <amort-loan-details />
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Amount Pie Chart -->
+    <div class="col-md-4">
+      <div class="card shadow border-success border-2">
+        <div class="card-body">
+          <h5 class="card-title text-success"><i class="pi pi-chart-pie"></i> Total Amount</h5>
+          <p-chart type="pie" height="22rem" [data]="data" [options]="options" class="w-100"
+            style="max-width: 350px; margin: 0 auto;"></p-chart>
+          <div class="text-center mt-3">
+            <span class="badge bg-success me-2">Paid</span>
+            <span class="badge bg-warning text-dark">To Be Paid</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loan Tenure Doughnut Chart -->
+    <div class="col-md-4">
+      <div class="card shadow border-warning border-2">
+        <div class="card-body">
+          <h5 class="card-title text-warning"><i class="pi pi-clock"></i> Loan Tenure Details</h5>
+          <div class="p-4">
+            <p-chart type="doughnut" height="22rem" [data]="tenureData" [options]="tenureOptions" class="w-100"
+              style="max-width: 350px; margin: 0 auto;"></p-chart>
+          </div>
+          <div class="text-center mt-3">
+            <span class="badge bg-success me-2">Completed</span>
+            <span class="badge bg-warning text-dark">Remaining</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Relativity Card -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card bg-light border-0 shadow-sm">
+        <div class="card-body d-flex flex-column flex-md-row align-items-center justify-content-center">
+          <div class="text-center px-3">
+            <span class="fw-bold text-success">Paid (<span class="text-muted">₹ </span> {{(data.datasets[0].data[0] + data.datasets[0].data[1]).toLocaleString('en-IN')  }})</span>
+            <br>
+            <small class="text-muted">Principal + Interest</small>
+          </div>
+          <div class="mx-3 d-none d-md-block" style="font-size: 2rem;">⇄</div>
+          <div class="text-center px-3">
+            <span class="fw-bold text-warning">Completed ({{tenureData.datasets[0].data[0]}} months)</span>
+            <br>
+            <small class="text-muted">Tenure Progress</small>
+          </div>
+          <div class="mx-3 d-none d-md-block" style="font-size: 2rem;">⇄</div>
+          <div class="text-center px-3">
+            <span class="fw-bold text-warning">
+              To Be Paid (<span class="text-muted">₹ </span>{{ (data.datasets[0].data[2] +
+              data.datasets[0].data[3]).toLocaleString('en-IN') }})
+            </span>
+            <br>
+            <small class="text-muted">Principal + Interest</small>
+          </div>
+          <div class="mx-3 d-none d-md-block" style="font-size: 2rem;">⇄</div>
+          <div class="text-center px-3">
+            <span class="fw-bold text-success">Remaining ({{tenureData.datasets[0].data[1]}} months)</span>
+            <br>
+            <small class="text-muted">Tenure Left</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Amortisation Report Table -->
+  <div class="row mb-4">
+    <amort-amortisation-report />
+  </div>
 </div>

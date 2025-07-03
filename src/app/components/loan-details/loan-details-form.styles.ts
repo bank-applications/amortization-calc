@@ -3,13 +3,14 @@ const DATE_PICKER_COLOR = '#4f72d4';
 export const loanDetailsCardStyles = {
   root: {
     background: `${WHITE_COLOR}29`,
-    color: WHITE_COLOR
+    color: WHITE_COLOR,
+    outerHeight: '100%',
   }
 };
 
 export const formElementStyles = {
   root: {
-    background: `${WHITE_COLOR}29`,
+    background: `${WHITE_COLOR}`,
     color: WHITE_COLOR
   }
 }

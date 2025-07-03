@@ -21,6 +21,7 @@
     "@angular/router": "^19.2.9",
     "@primeng/themes": "^19.1.2",
     "bootstrap": "^5.3.3",
+    "chart.js": "^4.5.0",
     "firebase": "^11.8.1",
     "primeicons": "^7.0.0",
     "primeng": "^19.1.2",

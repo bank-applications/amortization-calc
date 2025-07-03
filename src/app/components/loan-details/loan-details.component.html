@@ -1,36 +1,35 @@
-<p-card header="Loan Details" [dt]="loanDetailsCardStyles">
-  <form [formGroup]="loanForm" class="loan-details-form" >
-    <div class="row">
-      <div class="col">
-        <p-floatlabel>
-          <input id="principal" pInputText placeholder="" [dt]="formElementStyles" formControlName="principal" />
-          <label for="principal" class="form-element-label">Principal Amount</label>
-        </p-floatlabel>
-      </div>
-      <div class="col">
-        <p-floatlabel>
-          <input id="roi" pInputText placeholder="" [dt]="formElementStyles" formControlName="roi" />
-          <label for="roi" class="form-element-label">Interest Rate</label>
-        </p-floatlabel>
-      </div>
-      <div class="col">
-        <p-floatlabel>
-          <input id="tenure" pInputText placeholder="" [dt]="formElementStyles" formControlName="tenure" />
-          <label for="tenure" class="form-element-label">Tenure</label>
-        </p-floatlabel>
-      </div>
-      <div class="col date-picker-element">
-        <label class="form-element-label loan-start-date">Start Date</label>
-        <p-datepicker class="custom-date-picker" formControlName="startDate" [dt]="startDateStyles"></p-datepicker>
-      </div>
+<form [formGroup]="loanForm" class="loan-details-form">
+  <div class="row m-4">
+    <label for="principal" class="col-sm-2 col-form-label">Principal</label>
+    <div class="col-sm-10">
+      <input id="principal" type="text" class="form-control" formControlName="principal" />
     </div>
-    <div class="row">
-      <div class="col-5"></div>
-      <div class="col-2 flex justify-content-center">
-        <p-button class="custom-icon-button" label="Submit" [raised]="true" [dt]="submitButtonStyles" (onClick)="onSubmitDetails()"/>
-      </div>
-      <div class="col-5"></div>
-    </div>
+  </div>
 
-  </form>
-</p-card>
+  <div class="row m-3">
+    <label for="roi" class="col-sm-2 col-form-label">Interest Rate</label>
+    <div class="col-sm-10">
+      <input id="roi" type="text" class="form-control" formControlName="roi" />
+    </div>
+  </div>
+
+  <div class="row m-4">
+    <label for="tenure" class="col-sm-2 col-form-label">Tenure</label>
+    <div class="col-sm-10">
+      <input id="tenure" type="text" class="form-control" formControlName="tenure" />
+    </div>
+  </div>
+
+  <div class="row m-4" style="padding-top: 1.5rem;">
+    <label for="startDate" class="col-sm-2 col-form-label">Start Date</label>
+    <div class="col-sm-10">
+      <input id="startDate" type="date" class="form-control" formControlName="startDate" />
+    </div>
+  </div>
+
+  <div class="row mt-4 mb-3 p-4">
+    <div class="col-2 d-flex justify-content-start align-items-center">
+      <button type="button" class="btn btn-primary" (click)="onSubmitDetails()">Submit</button>
+    </div>
+  </div>
+</form>
