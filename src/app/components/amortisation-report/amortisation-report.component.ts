@@ -17,6 +17,7 @@ import { Card } from "primeng/card";
 import { ToolbarModule } from "primeng/toolbar";
 import { MonthlyInstallment, YearlyInstallment } from '../../domain/installment-domain';
 import { FireBaseService } from '../../services/fire-base.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'amort-amortisation-report',
@@ -50,7 +51,7 @@ export class AmortisationReportComponent implements OnInit {
   protected readonly cardStyles = cardStyles;
   customTableStyles = { 'min-width': '60rem', 'border': '1px solid #ffffff29', 'border-radius': '1px' };
 
-  constructor(private confirmationService: ConfirmationService, private messageService: MessageService) { }
+  constructor(private confirmationService: ConfirmationService, private messageService: MessageService, private router: Router) { }
 
 
   ngOnInit(): void {
@@ -165,6 +166,11 @@ export class AmortisationReportComponent implements OnInit {
     });
   }
 
+  navigateToAnalyze() {
+    // Navigate to the analysis page
+    this.router.navigate(['/analysis']);
+  }
+
 }
 
 
@@ -178,4 +184,4 @@ export interface EditMonthlyRow {
   emi: number;
   partPayment: number;
   month: number;
-} 
+}

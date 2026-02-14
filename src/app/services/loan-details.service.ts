@@ -35,14 +35,13 @@ export class LoanDetailsService {
     //this.generateAmortisationReport();
   }
 
-  generateAmortisationReport(): void {
-    // clear local var
-    this.clear();
+  getMonthlyInstallments(): MonthlyInstallment[] {
 
     const totalInstallments: MonthlyInstallment[] = [];
+     // clear local var
+    this.clear(); 
     const currentMonth = this.firstMonth();
     totalInstallments.push(currentMonth);
-
 
     const totalMonths = this._loanDetails.tenure * 12;
     // calculate for next months
@@ -103,10 +102,12 @@ export class LoanDetailsService {
 
       totalInstallments.push(nextMonth);
     }
+    return totalInstallments;
 
+  }
 
-    this.amortisationReport$.next([...totalInstallments]);
-
+  generateAmortisationReport(): void {
+    this.amortisationReport$.next([...this.getMonthlyInstallments()]);
   }
 
 

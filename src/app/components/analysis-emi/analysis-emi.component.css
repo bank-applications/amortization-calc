@@ -1,0 +1,62 @@
+.card {
+  padding: 20px;
+  margin: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+p-table {
+  width: 100%;
+  min-width: 800px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  background-color: #f8f9fa;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 2px solid #dee2e6;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+td {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+tr:hover {
+  background-color: #f8f9fa;
+}
+
+.profit {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.loss {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.summary {
+  border-left: 2px solid #dee2e6;
+  padding-left: 15px;
+  color: #6c757d;
+}
+
+.interestImpact, .tenureImpact {
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  p-table {
+    overflow-x: auto;
+    display: block;
+  }
+}

@@ -55,7 +55,7 @@ export class FireBaseService {
           interestRate: installment.interestRate
         };
       });
-      this.loanDetailsService.generateAmortisationReport();
+     
     });
   }
 

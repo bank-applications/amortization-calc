@@ -1,0 +1,31 @@
+<div class="card">
+  <h5>Edited EMI/Part-Payment Analysis</h5>
+  <p-table [value]="analysisData" [tableStyle]="{'min-width': '50rem'}">
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of columns">
+          {{col.header}}
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData>
+      <tr>
+        <td *ngFor="let col of columns">
+          <span *ngIf="col.field === 'interestImpact'" [ngClass]="{'profit': rowData.interestImpact > 0, 'loss': rowData.interestImpact < 0}">
+            {{rowData.interestImpact | number:'1.2-2'}}
+          </span>
+          <span *ngIf="col.field === 'tenureImpact'">
+            {{rowData.tenureImpact}} months
+          </span>
+          <span *ngIf="col.field === 'summary'">
+            Original Interest: {{rowData.summary.originalInterest | number:'1.2-2'}}, Modified Interest: {{rowData.summary.modifiedInterest | number:'1.2-2'}}<br>
+            Original Tenure: {{rowData.summary.originalTenure}} months, Modified Tenure: {{rowData.summary.modifiedTenure}} months
+          </span>
+          <span *ngIf="col.field !== 'interestImpact' && col.field !== 'tenureImpact' && col.field !== 'summary'">
+            {{rowData[col.field]}}
+          </span>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
