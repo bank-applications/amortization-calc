@@ -1,63 +1,46 @@
 import { Component, inject } from '@angular/core';
-import { Auth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged, User } from '@angular/fire/auth';
-import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { Auth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from '@angular/fire/auth';
 import { FireBaseService } from '../../services/fire-base.service';
 
-
 @Component({
-  selector: 'amort-login',
-  imports: [
-    FormsModule, RouterModule
-  ],
-  templateUrl: 'login.component.html',
+  selector: 'app-login',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
+  templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-
-
 export class LoginComponent {
-
+  email = '';
+  password = '';
+  errorMessage = '';
+  
   private auth = inject(Auth);
   private router = inject(Router);
   private firebaseService = inject(FireBaseService);
 
-  email = '';
-  password = '';
-  status = '';
-
-  constructor() {
-    onAuthStateChanged(this.auth, async (user: User | null) => {
-      if (user) {
-        // User is signed in (could be SSO auto-login)
-        this.status = `Auto-login: ${user.email}`;
-        await this.firebaseService.loadCurrentUser();
-        await this.firebaseService.loadUserLoanDetails();
-        this.router.navigate(['dashboard']);
-      }
-    });
+  async loginWithEmail() {
+    try {
+      await signInWithEmailAndPassword(this.auth, this.email, this.password);
+      await this.firebaseService.loadCurrentUser();
+      await this.firebaseService.loadUserLoanDetails();
+      this.router.navigate(['/dashboard']);
+    } catch (error: any) {
+      this.errorMessage = error.message;
+    }
   }
 
-  loginWithEmail() {
-    signInWithEmailAndPassword(this.auth, this.email, this.password)
-      .then(async res => {
-        this.status = `Logged in: ${res.user.email}`;
-        await this.firebaseService.loadCurrentUser();
-        await this.firebaseService.loadUserLoanDetails(); 
-        this.router.navigate(['dashboard']); // 👈 navigate to dashboard
-      })
-      .catch(err => this.status = `Error: ${err.message}`);
-  }
-
-  loginWithGoogle() {
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(this.auth, provider)
-      .then(async res => {
-        this.status = `Google login success: ${res.user.email}`;
-        await this.firebaseService.loadCurrentUser();
-        await this.firebaseService.loadUserLoanDetails(); 
-        this.router.navigate(['dashboard']); // 👈 navigate to dashboard
-
-      })
-      .catch(err => this.status = `Google login error: ${err.message}`);
+  async loginWithGoogle() {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(this.auth, provider);
+      await this.firebaseService.loadCurrentUser();
+      await this.firebaseService.loadUserLoanDetails();
+      this.router.navigate(['/dashboard']);
+    } catch (error: any) {
+      this.errorMessage = error.message;
+    }
   }
 }

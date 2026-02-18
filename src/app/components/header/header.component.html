@@ -1,7 +1,31 @@
-<div class="main-header">
-  <div class="row">
-    <div class="col-4">
-      <h4 class="app-name">Home Loan Amortization Calculator</h4>
+<nav class="navbar navbar-expand-lg navbar-dark custom-header shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" routerLink="/dashboard">
+      <i class="pi pi-wallet me-2"></i>Amortization Calc
+    </a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active"><i class="pi pi-home me-1"></i>Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/profit-loss" routerLinkActive="active"><i class="pi pi-dollar me-1"></i>Profit/Loss</a>
+        </li>
+      </ul>
+      <div class="d-flex align-items-center">
+        @if (user$ | async; as user) {
+          <div class="navbar-text me-3 text-white user-info">
+            <i class="pi pi-user me-1"></i> {{ user.email }}
+          </div>
+          <button class="btn btn-light btn-sm rounded-pill px-3 fw-bold text-primary" (click)="logout()">Logout</button>
+        } @else {
+          <a class="btn btn-outline-light me-2 rounded-pill px-3" routerLink="/login">Login</a>
+          <a class="btn btn-light rounded-pill px-3 text-primary fw-bold" routerLink="/register">Register</a>
+        }
+      </div>
     </div>
   </div>
-</div>
+</nav>
