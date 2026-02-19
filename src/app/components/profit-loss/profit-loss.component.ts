@@ -1,6 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoanDetailsService } from '../../services/loan-details.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-profit-loss',
@@ -9,14 +10,23 @@ import { LoanDetailsService } from '../../services/loan-details.service';
   templateUrl: './profit-loss.component.html',
   styleUrl: './profit-loss.component.css'
 })
-export class ProfitLossComponent implements OnInit {
+export class ProfitLossComponent implements OnInit, OnDestroy {
   loanService = inject(LoanDetailsService);
   
   modifiedRows: any[] = [];
   totalProfitLoss = 0;
+  private subscription: Subscription | null = null;
 
   ngOnInit() {
-    this.calculateProfitLoss();
+    this.subscription = this.loanService.amortisationReport$.subscribe(() => {
+      this.calculateProfitLoss();
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   calculateProfitLoss() {

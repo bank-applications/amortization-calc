@@ -120,6 +120,7 @@ export class LoanDetailsService {
       if (currentMonth.interestPaid > currentMonth.emiAmount) {
         currentMonth.emiAmount = this.calculateEMI({
           ...loanDetails,
+          principal: previousEndBalance,
           roi: currentMonth.interestRate,
           tenure: ((loanDetails.tenure * 12) - totalInstallments.length) / 12,
         } as LoanDetails);
