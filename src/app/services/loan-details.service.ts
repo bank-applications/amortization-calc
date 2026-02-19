@@ -91,9 +91,10 @@ export class LoanDetailsService {
     let previousEmi = this.calculateEMI(loanDetails);
     let previousInterestRate = loanDetails.roi;
 
-    const totalMonths = loanDetails.tenure * 12;
+    let i = 1;
+    const maxMonths = 1200; // Safety limit of 100 years
 
-    for (let i = 1; i <= totalMonths; i++) {
+    while (previousEndBalance > 0 && i <= maxMonths) {
       const currentMonth = new MonthlyInstallment();
       currentMonth.incrementalMonth = i;
       currentMonth.dueDate = i === 1 ? loanDetails.startDate : this.addMonths(loanDetails.startDate, i - 1);
@@ -140,6 +141,7 @@ export class LoanDetailsService {
         currentMonth.endingBalance = 0;
         break;
       }
+      i++;
     }
     return totalInstallments;
   }
