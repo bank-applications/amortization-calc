@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { LoanDetailsService } from './loan-details.service';
 import { User } from 'firebase/auth';
 import { AmortizationInstallment, FireBaseDoc } from '../domain/firebase-domain';
-import { Auth } from '@angular/fire/auth';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 import { Firestore, collection, query, where, getDocs, deleteDoc, addDoc, doc, DocumentData, DocumentReference, updateDoc, Timestamp } from '@angular/fire/firestore';
 
 @Injectable({
@@ -18,7 +18,7 @@ export class FireBaseService {
 
   constructor() {
     // Listen for auth state changes
-    this.auth.onAuthStateChanged(user => {
+    onAuthStateChanged(this.auth, user => {
       this.currentUser = user;
     });
   }
@@ -32,6 +32,7 @@ export class FireBaseService {
     const userId = this.getStoredUser()?.uid;
     if (!userId) {
       console.error('No user is currently logged in.');
+      return;
     }
     // Query Firestore for the user's loan details
     const loanDetailsQuery = query(
@@ -41,6 +42,12 @@ export class FireBaseService {
     const querySnapshot = await getDocs(loanDetailsQuery);
     if (querySnapshot.empty) {
       console.warn('No loan details found for the current user.');
+      this.loanDetailsService.loanDetails = {
+        principal: 0,
+        roi: 0,
+        tenure: 0,
+        startDate: new Date()
+      };
     }
     querySnapshot.forEach(doc => {
       const data = doc.data() as FireBaseDoc;
@@ -55,8 +62,9 @@ export class FireBaseService {
           interestRate: installment.interestRate
         };
       });
-      this.loanDetailsService.generateAmortisationReport();
+     
     });
+    this.loanDetailsService.generateAmortisationReport();
   }
 
   getStoredUser(): User | null {
@@ -114,4 +122,3 @@ export class FireBaseService {
     
   }
 }
-

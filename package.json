@@ -9,6 +9,10 @@
     "test": "ng test"
   },
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git@github-personal:vinod898/amortization-calc.git"
+  },
   "dependencies": {
     "@angular/animations": "^19.2.9",
     "@angular/common": "^19.2.9",

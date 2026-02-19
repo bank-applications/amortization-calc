@@ -35,78 +35,120 @@ export class LoanDetailsService {
     //this.generateAmortisationReport();
   }
 
-  generateAmortisationReport(): void {
-    // clear local var
-    this.clear();
+  get emi(): number {
+    if (this.loanDetails.principal <= 0 || this.loanDetails.tenure <= 0) {
+      return 0;
+    }
+    return this.calculateEMI(this.loanDetails);
+  }
 
-    const totalInstallments: MonthlyInstallment[] = [];
-    const currentMonth = this.firstMonth();
-    totalInstallments.push(currentMonth);
+  get totalInterest(): number {
+    const report = this.amortisationReport$.getValue();
+    return report.reduce((sum, item) => sum + item.interestPaid, 0);
+  }
 
+  get totalPayment(): number {
+    const report = this.amortisationReport$.getValue();
+    return report.reduce((sum, item) => sum + item.totalPaid, 0);
+  }
 
-    const totalMonths = this._loanDetails.tenure * 12;
-    // calculate for next months
-    for (let i = 2; i <= totalMonths; i++) {
-      const nextMonth = new MonthlyInstallment();
+  get remainingTenure(): number {
+    const report = this.amortisationReport$.getValue();
+    let endDate: Date;
+    let startDate: Date;
 
-      nextMonth.incrementalMonth = i;
-      nextMonth.dueDate = this.addMonths(this._loanDetails.startDate, i - 1);
-      nextMonth.paymentDate = nextMonth.dueDate;
-
-      // set prev month calculated previousEndBalance  as current month starting balance
-      nextMonth.startingBalance = this.previousEndBalance;
-
-      // set edited values of emi, roi and partPayment otherwise set prev values for emi and roi and set partpay as zero
-      let editedRecord: AmortizationInstallment | null = null;
-      const key = this.formatDateKey(nextMonth.paymentDate);
-      if (key !== '') {
-        editedRecord = this.clonedRows[key];
-      }
-      if (editedRecord) {
-        const { emiAmount, interestRate, partPaymentAmount }: AmortizationInstallment = editedRecord;
-        nextMonth.emiAmount = emiAmount;
-        nextMonth.interestRate = interestRate;
-        nextMonth.partPaymentAmount = partPaymentAmount;
-      } else {
-        nextMonth.emiAmount = this.previousEmi;
-        nextMonth.interestRate = this.previousInterestRate
-        nextMonth.partPaymentAmount = 0;
-      }
-      // calculated based on editable rows
-      nextMonth.interestPaid = this.calculateInterest(nextMonth);
-      // check interest calculated is more emi
-      if (nextMonth.interestPaid > nextMonth.emiAmount) {
-        nextMonth.emiAmount = this.calculateEMI({
-          ...this.loanDetails,
-          roi: nextMonth.interestRate,
-          tenure: ((this.loanDetails.tenure * 12) - totalInstallments.length) / 12,
-        } as LoanDetails)
-      }
-      nextMonth.principalPaid = this.calculatePrincipal(nextMonth);
-      nextMonth.endingBalance = this.calculateEndingBalance(nextMonth);
-
-      nextMonth.paymentStatus = this.getPaymentStatus(nextMonth.paymentDate);
-      nextMonth.remarks = `Installment for month ${i}`;
-      nextMonth.totalPaid = nextMonth.emiAmount + nextMonth.partPaymentAmount;
-
-      // set values for next installment calculation
-      this.previousEndBalance = nextMonth.endingBalance;
-      this.previousEmi = nextMonth.emiAmount;
-      this.previousInterestRate = nextMonth.interestRate;
-
-      // Stop if loan is paid off
-      if (nextMonth.endingBalance <= 0) {
-        nextMonth.endingBalance = 0;
-        totalInstallments.push(nextMonth);
-        break;
-      }
-
-      totalInstallments.push(nextMonth);
+    if (report && report.length > 0) {
+      const lastInstallment = report[report.length - 1];
+      endDate = new Date(lastInstallment.paymentDate ?? new Date());
+      startDate = new Date(this.loanDetails.startDate);
+    } else {
+      const { startDate: sDate, tenure } = this.loanDetails;
+      if (!sDate || tenure <= 0) return 0;
+      startDate = new Date(sDate);
+      if (isNaN(startDate.getTime())) return 0;
+      endDate = new Date(startDate);
+      endDate.setUTCFullYear(startDate.getUTCFullYear() + tenure);
     }
 
+    const today = new Date();
+    if (today > endDate) return 0;
+    
+    const effectiveStart = today < startDate ? startDate : today;
+    const diffTime = endDate.getTime() - effectiveStart.getTime();
+    const diffYears = diffTime / (1000 * 60 * 60 * 24 * 365.25);
+    return Math.max(0, parseFloat(diffYears.toFixed(1)));
+  }
 
-    this.amortisationReport$.next([...totalInstallments]);
+  getMonthlyInstallments(): MonthlyInstallment[] {
+    return this.calculateAmortization(this._loanDetails, this.clonedRows);
+  }
 
+  calculateAmortization(loanDetails: LoanDetails, clonedRows: { [s: string]: AmortizationInstallment } = {}): MonthlyInstallment[] {
+    const totalInstallments: MonthlyInstallment[] = [];
+    
+    // Initial values
+    let previousEndBalance = loanDetails.principal;
+    let previousEmi = this.calculateEMI(loanDetails);
+    let previousInterestRate = loanDetails.roi;
+
+    let i = 1;
+    const maxMonths = 1200; // Safety limit of 100 years
+
+    while (previousEndBalance > 0 && i <= maxMonths) {
+      const currentMonth = new MonthlyInstallment();
+      currentMonth.incrementalMonth = i;
+      currentMonth.dueDate = i === 1 ? loanDetails.startDate : this.addMonths(loanDetails.startDate, i - 1);
+      currentMonth.paymentDate = currentMonth.dueDate;
+      currentMonth.startingBalance = i === 1 ? loanDetails.principal : previousEndBalance;
+
+      const key = this.formatDateKey(currentMonth.paymentDate);
+      const editedRecord = clonedRows[key];
+
+      if (editedRecord) {
+        currentMonth.emiAmount = editedRecord.emiAmount;
+        currentMonth.interestRate = editedRecord.interestRate;
+        currentMonth.partPaymentAmount = editedRecord.partPaymentAmount;
+      } else {
+        currentMonth.emiAmount = previousEmi;
+        currentMonth.interestRate = previousInterestRate;
+        currentMonth.partPaymentAmount = 0;
+      }
+
+      currentMonth.interestPaid = this.calculateInterest(currentMonth);
+
+      // Recalculate EMI if interest > EMI (negative amortization protection)
+      if (currentMonth.interestPaid > currentMonth.emiAmount) {
+        currentMonth.emiAmount = this.calculateEMI({
+          ...loanDetails,
+          principal: previousEndBalance,
+          roi: currentMonth.interestRate,
+          tenure: ((loanDetails.tenure * 12) - totalInstallments.length) / 12,
+        } as LoanDetails);
+      }
+
+      currentMonth.principalPaid = this.calculatePrincipal(currentMonth);
+      currentMonth.endingBalance = this.calculateEndingBalance(currentMonth);
+      currentMonth.paymentStatus = this.getPaymentStatus(currentMonth.paymentDate);
+      currentMonth.remarks = `Installment for month ${i}`;
+      currentMonth.totalPaid = currentMonth.emiAmount + currentMonth.partPaymentAmount;
+
+      previousEndBalance = currentMonth.endingBalance;
+      previousEmi = currentMonth.emiAmount;
+      previousInterestRate = currentMonth.interestRate;
+
+      totalInstallments.push(currentMonth);
+
+      if (currentMonth.endingBalance <= 0) {
+        currentMonth.endingBalance = 0;
+        break;
+      }
+      i++;
+    }
+    return totalInstallments;
+  }
+
+  generateAmortisationReport(): void {
+    this.amortisationReport$.next([...this.getMonthlyInstallments()]);
   }
 
 
@@ -144,30 +186,6 @@ export class LoanDetailsService {
   }
 
 
-  private firstMonth(): MonthlyInstallment {
-    const firstMonth = new MonthlyInstallment();
-    const loan = this._loanDetails;
-
-    firstMonth.incrementalMonth = 1;
-    firstMonth.dueDate = loan.startDate;
-    firstMonth.paymentDate = loan.startDate;
-    firstMonth.startingBalance = this.calculateStartingBalance();
-    firstMonth.interestRate = loan.roi;
-    firstMonth.emiAmount = this.calculateEMI(loan);
-    firstMonth.partPaymentAmount = 0;
-    firstMonth.totalPaid = firstMonth.emiAmount;
-    firstMonth.interestPaid = this.calculateInterest(firstMonth);
-    firstMonth.principalPaid = this.calculatePrincipal(firstMonth);
-    firstMonth.endingBalance = this.calculateEndingBalance(firstMonth);
-    firstMonth.paymentStatus = this.getPaymentStatus(firstMonth.paymentDate);
-    firstMonth.remarks = 'First month payment.';
-
-    // set first month values
-    this.previousEndBalance = firstMonth.endingBalance;
-    this.previousEmi = firstMonth.emiAmount;
-    this.previousInterestRate = firstMonth.interestRate;
-    return firstMonth;
-  }
 
   clear() {
     this.previousEndBalance = 0;
@@ -178,14 +196,11 @@ export class LoanDetailsService {
 
   private addMonths(date: Date, months: number): Date {
     const result = new Date(date);
-    result.setMonth(result.getMonth() + months);
+    result.setUTCMonth(result.getUTCMonth() + months);
     return result;
   }
 
 
-  private calculateStartingBalance(): number {
-    return this.previousEndBalance || this._loanDetails.principal;
-  }
 
   private calculateInterest(schedule: MonthlyInstallment): number {
     const monthlyRate = schedule.interestRate / 12 / 100;
@@ -201,6 +216,9 @@ export class LoanDetailsService {
   }
 
   private calculateEMI(loan: LoanDetails): number {
+    if (loan.roi === 0) {
+      return loan.tenure > 0 ? Math.ceil(loan.principal / (loan.tenure * 12)) : 0;
+    }
     const monthlyRate = loan.roi / 12 / 100;
     const totalMonths = loan.tenure * 12;
     const rateFactor = Math.pow(1 + monthlyRate, totalMonths);
@@ -211,11 +229,12 @@ export class LoanDetailsService {
   private getPaymentStatus(paymentDate: string | Date): 'PAID' | 'DUE' | 'UPCOMING' {
     const today = new Date();
     const payDate = new Date(paymentDate);
-    today.setHours(0, 0, 0, 0);
-    payDate.setHours(0, 0, 0, 0);
+    
+    const todayStr = today.toISOString().slice(0, 10);
+    const payDateStr = payDate.toISOString().slice(0, 10);
 
-    if (payDate.getTime() === today.getTime()) return 'DUE';
-    return payDate < today ? 'PAID' : 'UPCOMING';
+    if (payDateStr === todayStr) return 'DUE';
+    return payDateStr < todayStr ? 'PAID' : 'UPCOMING';
   }
 
 
@@ -236,7 +255,7 @@ export class LoanDetailsService {
   }
 
   getFinancialYear = (currentEmiDate: Date): string => {
-    const currentYear = currentEmiDate.getMonth() < 3 ? currentEmiDate.getFullYear() - 1 : currentEmiDate.getFullYear();
+    const currentYear = currentEmiDate.getUTCMonth() < 3 ? currentEmiDate.getUTCFullYear() - 1 : currentEmiDate.getUTCFullYear();
     const nextYear = currentYear + 1;
     return `${currentYear}-${nextYear}`;
   };

@@ -9,3 +9,8 @@
 :host ::ng-deep .expansion-toggle .p-button .pi:hover {
   color: var(--primary-button-color);
 }
+
+:host ::ng-deep .custom-button {
+  padding: 10px 15px;
+  margin-left: 10px;
+}

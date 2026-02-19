@@ -1,0 +1,65 @@
+<div class="container-fluid mt-4">
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <h4 class="card-title mb-3">Profit / Loss Analysis</h4>
+      <div class="alert" [ngClass]="totalProfitLoss >= 0 ? 'alert-success' : 'alert-danger'">
+        <h5 class="mb-0">
+          Total Interest Savings: 
+          <strong>{{ totalProfitLoss | currency:'INR':'symbol':'1.0-0' }}</strong>
+          <span class="fs-6 ms-2">({{ totalProfitLoss >= 0 ? 'Profit' : 'Loss' }})</span>
+        </h5>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-white py-3">
+      <h5 class="mb-0 text-secondary"><i class="pi pi-list me-2"></i>Impact of Changes</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table mb-0 align-middle custom-table">
+          <thead class="bg-light">
+            <tr>
+              <th class="py-3 ps-4">Year</th>
+              <th class="py-3">Month</th>
+              <th class="py-3">EMI</th>
+              <th class="py-3">Interest Rate</th>
+              <th class="py-3">Part Payment</th>
+              <th class="py-3">Total Payment</th>
+              <th class="py-3">Total Interest</th>
+              <th class="py-3">Profit / Loss</th>
+              <th class="py-3">Profit %</th>
+              <th class="py-3 pe-4">Remaining Tenure</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of modifiedRows" [class.table-secondary]="item.isPast" [class.text-muted]="item.isPast">
+              <td class="ps-4 fw-bold">{{ item.year }}</td>
+              <td>{{ item.month }}</td>
+              <td>{{ item.emi | currency:'INR':'symbol':'1.0-0' }}</td>
+              <td [class.text-primary]="item.isRateChanged" class="fw-bold">{{ item.interestRate | number:'1.2-2' }}%</td>
+              <td [class.text-success]="item.partPayment > 0">{{ item.partPayment | currency:'INR':'symbol':'1.0-0' }}</td>
+              <td>{{ item.totalPayment | currency:'INR':'symbol':'1.0-0' }}</td>
+              <td>{{ item.totalInterest | currency:'INR':'symbol':'1.0-0' }}</td>
+              <td class="fw-bold" [class.text-success]="item.profitLoss > 0" [class.text-danger]="item.profitLoss < 0">
+                {{ item.profitLoss | currency:'INR':'symbol':'1.0-0' }}
+              </td>
+              <td [class.text-success]="item.percentageChange > 0" [class.text-danger]="item.percentageChange < 0">
+                {{ item.percentageChange | number:'1.2-2' }}%
+              </td>
+              <td class="pe-4">
+                {{ item.remainingTenureLabel }}
+              </td>
+            </tr>
+            <tr *ngIf="modifiedRows.length === 0">
+              <td colspan="10" class="text-center py-5 text-muted">
+                No modifications found. Edit the amortization schedule to see the impact here.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
