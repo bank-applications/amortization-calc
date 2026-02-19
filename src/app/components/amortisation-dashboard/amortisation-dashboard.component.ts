@@ -110,9 +110,8 @@ export class AmortisationDashboardComponent {
     }
   }
 
-  async calculateAndSave() {
+  calculate() {
     this.loanService.generateAmortisationReport();
-    await this.firebaseService.saveChanges();
   }
 
   openEditModal(item: any) {
@@ -126,11 +125,15 @@ export class AmortisationDashboardComponent {
     this.editingItem = null;
   }
 
-  async saveEdit() {
+  saveEdit() {
     if (this.editingItem) {
       this.loanService.onRowEditSave(this.editingItem);
-      await this.firebaseService.saveChanges();
       this.closeEditModal();
     }
+  }
+
+  async saveChanges() {
+    await this.firebaseService.saveChanges();
+    alert('Changes saved successfully!');
   }
 }

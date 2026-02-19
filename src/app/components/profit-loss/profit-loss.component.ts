@@ -71,7 +71,8 @@ export class ProfitLossComponent implements OnInit {
           percentageChange: percentageChange,
           remainingTenureLabel: this.formatTenure(remainingMonths),
           // Helper to check if interest rate was changed
-          isRateChanged: originalItem ? currentItem.interestRate !== originalItem.interestRate : false
+          isRateChanged: originalItem ? currentItem.interestRate !== originalItem.interestRate : false,
+          isPast: paymentDate < new Date()
         });
       }
     });

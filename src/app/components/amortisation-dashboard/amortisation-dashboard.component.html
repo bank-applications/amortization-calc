@@ -15,7 +15,7 @@
           </button>
         </div>
         <div class="card-body p-4" *ngIf="isConfigOpen">
-          <form (ngSubmit)="calculateAndSave()">
+          <form (ngSubmit)="calculate()">
             <div class="mb-4">
               <label class="form-label">Loan Amount</label>
               <div class="input-group">
@@ -50,7 +50,7 @@
             </div>
             <div class="d-grid mt-4">
               <button type="submit" class="btn btn-primary btn-calculate text-white">
-                Calculate & Save
+                Calculate
               </button>
             </div>
           </form>
@@ -112,8 +112,11 @@
     <!-- Amortization Table Section -->
     <div [ngClass]="(isConfigOpen || isSummaryOpen) ? 'col-lg-9' : 'col-lg-11'" class="mb-4 transition-width">
       <div class="card loan-config-card">
-        <div class="card-header loan-config-header text-white">
+        <div class="card-header loan-config-header text-white d-flex justify-content-between align-items-center">
           <h5 class="mb-0"><i class="pi pi-list me-2"></i>Amortization Schedule</h5>
+          <button class="btn btn-light btn-sm fw-bold text-primary" (click)="saveChanges()">
+            <i class="pi pi-save me-2"></i>Save Changes
+          </button>
         </div>
         <div class="card-body p-0">
           <div class="table-responsive" style="max-height: 800px">

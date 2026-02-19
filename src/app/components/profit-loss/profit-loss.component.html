@@ -18,7 +18,7 @@
     </div>
     <div class="card-body p-0">
       <div class="table-responsive">
-        <table class="table table-striped table-hover mb-0 align-middle">
+        <table class="table mb-0 align-middle custom-table">
           <thead class="bg-light">
             <tr>
               <th class="py-3 ps-4">Year</th>
@@ -34,7 +34,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of modifiedRows">
+            <tr *ngFor="let item of modifiedRows" [class.table-secondary]="item.isPast" [class.text-muted]="item.isPast">
               <td class="ps-4 fw-bold">{{ item.year }}</td>
               <td>{{ item.month }}</td>
               <td>{{ item.emi | currency:'INR':'symbol':'1.0-0' }}</td>
